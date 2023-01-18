@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="session">
+
+  <select id="sessionConfirm" parameterType="hashmap" resultType="hashmap">
+    SELECT MS_SESSION_KEY
+    FROM MS_MAININFO_DETAIL
+    WHERE MS_NUM = IFNULL(NULLIF(#{MS_NUM}, ''), '')
+  </select>
+
+</mapper>

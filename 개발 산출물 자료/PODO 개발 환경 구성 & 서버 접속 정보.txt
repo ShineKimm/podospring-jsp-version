@@ -1,0 +1,77 @@
+PODO CC 차세대 프로젝트
+
+개발 환경 구성
+
+언어 -> JDK11
+백엔드 프레임워크 - > String Boot 2.7.4
+WAS -> Tomcat-embed-core:9.0.65
+IDE/에디터 -> IntelliJ IDEA
+형상관리 -> git
+뷰 템플릿 엔진 -> JSP
+DB -> mysql
+-----------------------------------------
+
+web-was 접속정보
+포도CC ( http://119.205.217.251:8023 )
+- FTP
+IP : 119.205.217.251
+PORT : 8024
+ID : GREENIT
+PW : greenit01!
+
+DB 접속정보
+- DB
+IP: 112.175.17.155
+USER : podo
+PW : podocc1!
+DB : podo
+PORT : 3306
+
+관리자 아이디
+ID : GZ00000001
+PW : 9876
+
+ID : admin
+PW : admin01
+--------------------------------------
+{
+    "protocol": "ftp",
+    "host": "119.205.217.251",
+    "port": 8024,
+    "user": "GREENIT",
+    "pass": "greenit01!",
+    "promptForPass": false,
+    "remote": "/",
+    "local": "",
+    "secure": false,
+    "secureOptions": null,
+    "connTimeout": 10000,
+    "pasvTimeout": 10000,
+    "keepalive": 10000,
+    "watch": [],
+    "watchTimeout": 500
+}
+--------------------------------------
+
+사용하는 테이블 목록
+HP_BOARD - 게시판
+CL_DAYINFO - 날짜정보
+HP_BOARD_REPLY - 게시판 댓글
+BK_STATE - 부킹 상태?
+BK_HISTORY - 히스토리
+EN_HISTORY
+USER_INFO
+WEB_STATICS
+MS_MAININFO
+HP_MESSAGE
+CD_COMMON
+MS_BENEFIT
+SMILEPAY
+AD_RECEIVE
+MN_IN_HISTORY
+CL_DAYINFO
+MN_MASTER_COST
+MN_COST_SALE
+SP_SMS_SEND
+
+요청 사항

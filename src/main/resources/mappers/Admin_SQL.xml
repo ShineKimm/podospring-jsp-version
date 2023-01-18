@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="admin">
+
+  <select id="AdminDoLogin" parameterType="hashmap" resultType="int">
+    SELECT COUNT(*) AS CNT
+    FROM USER_INFO
+    WHERE USER_STAFF = #{id}
+      AND IFNULL(NULLIF(USER_DEL, ''), 'N') != 'Y'
+
+  </select>
+
+  <select id="adminVerification" parameterType="hashmap" resultType="hashmap">
+    SELECT
+       USER_STAFF
+     , USER_NAME
+    FROM USER_INFO
+    WHERE USER_STAFF = #{id}
+      AND USER_PASSWORD = SHA2(#{pw}, 256)
+  </select>
+
+  <select id="query1" parameterType="hashmap" resultType="hashmap">
+    SELECT
+       IFNULL(SUM(S_WEB_CNT), 0)     S_WEB_CNT
+     , IFNULL(SUM(S_MOBILE_CNT), 0)  S_MOBILE_CNT
+     , IFNULL(SUM(S_ANDROID_CNT), 0) S_ANDROID_CNT
+     , IFNULL(SUM(S_IOS_CNT), 0)     S_IOS_CNT
+    FROM WEB_STATICS
+    WHERE S_DATE = DATE_FORMAT(NOW(), '%Y%m%d')
+    UNION ALL
+    SELECT
+       IFNULL(SUM(S_WEB_CNT), 0)     S_WEB_CNT
+     , IFNULL(SUM(S_MOBILE_CNT), 0)  S_MOBILE_CNT
+     , IFNULL(SUM(S_ANDROID_CNT), 0) S_ANDROID_CNT
+     , IFNULL(SUM(S_IOS_CNT), 0)     S_IOS_CNT
+    FROM WEB_STATICS
+    WHERE S_DATE = DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY), '%Y%m%d')
+    UNION ALL
+    SELECT
+       IFNULL(SUM(S_WEB_CNT), 0)     S_WEB_CNT
+     , IFNULL(SUM(S_MOBILE_CNT), 0)  S_MOBILE_CNT
+     , IFNULL(SUM(S_ANDROID_CNT), 0) S_ANDROID_CNT
+     , IFNULL(SUM(S_IOS_CNT), 0)     S_IOS_CNT
+    FROM WEB_STATICS
+  </select>
+
+  <select id="query2" parameterType="hashmap" resultType="hashmap">
+    SELECT COUNT(*) CNT
+    FROM MS_MAININFO
+    WHERE MS_FIRSTDAY = DATE_FORMAT(NOW(),'%Y%m%d')
+    UNION ALL
+    SELECT COUNT(*) CNT
+    FROM MS_MAININFO
+    WHERE MS_FIRSTDAY = DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -1 DAY),'%Y%m%d')
+    UNION ALL
+    SELECT COUNT(*) CNT
+    FROM (
+           SELECT  MS_NUM
+           FROM  MS_MAININFO
+           GROUP  BY  MS_NUM
+         ) A
+  </select>
+
+  <select id="getMessage" parameterType="hashmap" resultType="hashmap">
+    SELECT
+       CO_DIV
+     , HP_CODE
+     , HP_CONTENTS
+    FROM HP_MESSAGE
+    WHERE CO_DIV = #{coDiv}
+    <if test='code != ""'>
+      AND HP_CODE = #{code} LIMIT 1
+    </if>
+  </select>
+</mapper>

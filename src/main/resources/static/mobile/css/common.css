@@ -1,0 +1,153 @@
+@charset "utf-8";
+
+/*---------------------------------------------------*/
+/*                    'Web font'                    */
+/*---------------------------------------------------*/
+@import url('https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@1.0/nanumsquare.css')
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&display=swap');
+
+@import url('http://www.openhiun.com/hangul/nanumbarungothic.css');
+
+@import url('https://fonts.googleapis.com/css?family=Nanum+Myeongjo&display=swap');
+
+/*---------------------------------------------------*/
+/*       Nanum Gothic (Korean) google webfont        */
+/*---------------------------------------------------*/
+@font-face {
+	font-family:'Nanum Gothic';
+	font-style:normal;
+	font-weight:400;
+	src:url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Regular.eot);
+	src:url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Regular.eot?#iefix) format('embedded-opentype'),
+		url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Regular.woff) format('woff'),
+		url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Regular.ttf) format('truetype');
+}
+@font-face {
+	font-family:'Nanum GothicB';
+	font-style:normal;
+	font-weight:600;
+	src:url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Bold.eot);
+	src:url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Bold.eot?#iefix) format('embedded-opentype'),
+		url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Bold.woff) format('woff'),
+		url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-Bold.ttf) format('truetype');
+}
+@font-face {
+	font-family:'Nanum GothicEXB';
+	font-style:normal;
+	font-weight:800;
+	src:url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-ExtraBold.eot);
+	src:url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-ExtraBold.eot?#iefix) format('embedded-opentype'),
+		url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-ExtraBold.woff) format('woff'),
+		url(//themes.googleusercontent.com/static/fonts/earlyaccess/nanumgothic/v3/NanumGothic-ExtraBold.ttf) format('truetype');
+}
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var, let,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+	background-color: #fff;  color: #444;  font-size: 1em;
+	font-family: 'Noto Sans KR', sans-serif;
+	min-width: 320px;
+	height: 100%;
+	position: relative;
+	width: 100%;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+* {
+  margin: 0;
+  padding: 0;
+}
+*,
+*:after,
+*:before {
+  box-sizing: border-box;
+}
+a{ text-decoration: none;}
+
+caption{display:none;}
+
+textarea { resize:none; word-wrap:break-word; outline:none;}
+
+
+/* input placeholer */
+input::-webkit-input-placeholder{font-size:0.9em;color:#cbcaca}/* chrome */
+input::-moz-placeholder{font-size:0.9em;color:#cbcaca} /* firefox */
+input:-ms-input-placeholder{font-size:0.9em;color:#cbcaca}/* ei */
+
+/*button*/
+input[type="button"],button {-webkit-border-radius:0; -webkit-appearance:none;border: 0; outline: 0; border-image: none;vertical-align:middle;}
+input[type="radio"] {margin-top: -1px;vertical-align: middle;}
+
+textarea { resize:none; word-wrap:break-word; outline:none;}
+
+
+/* select ���� */
+select::-ms-expand {display:none;}
+select{
+	-webkit-appearance: none; /* ȭ��ǥ ���ֱ� for chrome*/ 
+	-moz-appearance: none;    /* ȭ��ǥ ���ֱ� for firefox*/ 
+	appearance: none;         /* ȭ��ǥ ���ֱ� ����*/ 
+	outline: none;
+	border: none;
+	box-shadow: none;
+	text-indent: 5px;
+	display: inline-block;
+	border: 1px solid #c9c9c9;
+	border-radius: 3px;
+	height: 30px;
+	background:#fff url("/images/inputSelectBg.jpg") no-repeat center right;
+	background-size:600px 40px;
+}
+
+*, 
+*:after,
+*:before {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+}

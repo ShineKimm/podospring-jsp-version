@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="reservation">
+  <select id="nowDate" parameterType="hashmap" resultType="String">
+    SELECT DATE_FORMAT(NOW(), '%Y%m%d')
+    FROM DUAL
+  </select>
+
+  <select id="getCalendarQuery1" parameterType="hashmap" resultType="hashmap">
+    SELECT CASE
+             WHEN CL_DAYDIV = '2' THEN
+               DATE_FORMAT(
+                 IF(
+                     WEEKDAY(
+                       DATE_SUB(CL_SOLAR, INTERVAL -1 WEEK)
+                       ) = 1,
+                     DATE_SUB(CL_SOLAR, INTERVAL -1 WEEK),
+                     DATE_ADD(
+                       DATE_SUB(CL_SOLAR, INTERVAL -1 WEEK),
+                       INTERVAL (
+			          1 - WEEKDAY(
+			            DATE_SUB(CL_SOLAR, INTERVAL -1 WEEK)
+			          )
+			        ) DAY
+			      )
+                   ),
+                 '%Y%m%d'
+                 )
+             ELSE
+               DATE_FORMAT(
+                 IF(
+                     WEEKDAY(
+                       DATE_SUB(CL_SOLAR, INTERVAL -2 WEEK)
+                       ) = 1,
+                     DATE_SUB(CL_SOLAR, INTERVAL -2 WEEK),
+                     DATE_ADD(
+                       DATE_SUB(CL_SOLAR, INTERVAL -2 WEEK),
+                       INTERVAL (
+			          1 - WEEKDAY(
+			            DATE_SUB(CL_SOLAR, INTERVAL -2 WEEK)
+			          )
+			        ) DAY
+			      )
+                   ),
+                 '%Y%m%d'
+                 )
+             END AS MINDAY,
+           CASE
+             WHEN CL_DAYDIV = '2' THEN
+               DATE_FORMAT(
+                 IF(
+                     WEEKDAY(
+                       DATE_SUB(CL_SOLAR, INTERVAL -1 WEEK)
+                       ) = 7,
+                     DATE_SUB(CL_SOLAR, INTERVAL -1 WEEK),
+                     DATE_ADD(
+                       DATE_SUB(CL_SOLAR, INTERVAL -1 WEEK),
+                       INTERVAL (
+		            7 - WEEKDAY(
+		              DATE_SUB(CL_SOLAR, INTERVAL -1 WEEK)
+		            )
+		          ) DAY
+		        )
+                   ),
+                 '%Y%m%d'
+                 )
+             ELSE
+               DATE_FORMAT(
+                 IF(
+                     WEEKDAY(
+                       DATE_SUB(CL_SOLAR, INTERVAL -2 WEEK)
+                       ) = 7,
+                     DATE_SUB(CL_SOLAR, INTERVAL -2 WEEK),
+                     DATE_ADD(
+                       DATE_SUB(CL_SOLAR, INTERVAL -2 WEEK),
+                       INTERVAL (
+		            7 - WEEKDAY(
+		              DATE_SUB(CL_SOLAR, INTERVAL -2 WEEK)
+		            )
+		          ) DAY
+		        )
+                   ),
+                 '%Y%m%d'
+                 )
+             END AS MAXDAY
+    FROM CL_DAYINFO
+    WHERE CO_DIV = #{coDiv}
+      AND CL_SOLAR = DATE_FORMAT(NOW(), '%Y%m%d')
+  </select>
+
+  <select id="getCalendarQuery2" parameterType="hashmap" resultType="hashmap">
+    SELECT
+           A.CL_SOLAR                      AS CL_SOLAR
+         , A.CL_DAYDIV
+         , NVL(B.BOOKG_ABLE_CNT, 0)        AS BK_TEAM
+         , SUBSTRING(A.CL_SOLAR, 7, 2) + 0 AS DAYNUM
+         , A.CL_BUSINESS                   AS CL_BUSINESS
+         , CASE
+             WHEN DAYOFWEEK(NOW()) = 3 AND DATE_FORMAT(NOW(), '%H%i') <![CDATA[<]]> '0900'
+               THEN DATE_FORMAT(DATE_ADD(#{minDay}, INTERVAL -1 DAY), '%Y%m%d')
+             ELSE #{maxDay} END             MAXDAY
+    FROM CL_DAYINFO A
+           LEFT OUTER JOIN (SELECT A.CO_DIV
+                                 , A.CL_SOLAR
+                                 , CAST(COUNT(B.BK_TIME) AS CHAR) AS BOOKG_ABLE_CNT
+                            FROM CL_DAYINFO A
+                                   INNER JOIN BK_HISTORY B
+                                              ON A.CO_DIV = B.CO_DIV
+                                                AND A.CL_SOLAR = B.BK_DAY
+                                                AND NVL(B.BK_NAME, '') = ''
+                                                AND NVL(B.BK_MSNUM, '') = ''
+                                                AND NVL(B.BK_YN, 'N') = 'N'
+                                                AND
+                                                 (TIMESTAMPDIFF(MINUTE, NVL(BK_LOCKTIME, NOW()), NOW()) >
+                                                  5 OR NVL(BK_LOCKTIME, '') = '')
+                                                AND B.BK_DAY > DATE_FORMAT(NOW(), '%Y%m%d')
+                            WHERE A.CO_DIV = #{coDiv}
+                              AND A.CL_SOLAR LIKE CONCAT(#{selYm}, '%')
+                              AND A.CL_BUSINESS IN ('1', '2', '3', '4')
+                              AND B.BK_DAY <![CDATA[<=]]> #{maxDay}
+                              AND CASE
+                                    WHEN DAYOFWEEK(NOW()) = 3 AND B.BK_DAY >= #{minDay}
+                                      THEN DATE_FORMAT(NOW(), '%H%i') >= '0900'
+                                    ELSE 1 = 1 END
+                              AND B.BK_DAY > DATE_FORMAT(NOW(), '%Y%m%d')
+                            GROUP BY A.CL_SOLAR) B
+                           ON A.CO_DIV = B.CO_DIV
+                             AND A.CL_SOLAR = B.CL_SOLAR
+    WHERE A.CL_SOLAR LIKE CONCAT(#{selYm}, '%')
+      AND A.CO_DIV = #{coDiv}
+    GROUP BY A.CL_SOLAR
+    ORDER BY A.CL_SOLAR
+  </select>
+
+  <select id="getTeeQuery1" parameterType="hashmap" resultType="hashmap">
+    SELECT
+        A.CO_DIV AS CO_DIV
+      , A.BK_DAY AS BK_DAY
+      , A.BK_COS AS BK_COS
+      , B.CD_TITLE1 AS BK_COS_NM
+      , A.BK_TIME AS BK_TIME
+      , A.BK_ROUNDF AS BK_ROUNDF
+      , D.CL_BUSINESS AS CL_BUSINESS
+      , IFNULL(NULLIF(E.MN_AMOUNT_DIV, ''), '') AS BK_B_CHARGE
+      , IFNULL(NULLIF(G.CD_TITLE1, ''), '') AS BK_B_CHARGE_NM
+      , IFNULL(NULLIF(F.MN_AMOUNT_DIV, ''), '') AS BK_S_CHARGE
+      , IFNULL(NULLIF(H.CD_TITLE1, ''), '') AS BK_S_CHARGE_NM
+      , CASE WHEN IFNULL(NULLIF(A.BK_CS,''),'N') = 'C' THEN '인턴캐디' WHEN IFNULL(NULLIF(A.BK_CS,''),'N')
+      = 'Y' THEN '캐디' ELSE '셀프' END AS BK_CADDY
+    FROM BK_HISTORY A
+    INNER JOIN CD_COMMON B
+    ON A.CO_DIV = B.CO_DIV
+    AND A.BK_COS = B.CD_CODE
+    AND B.CD_DIVISION = '012'
+    INNER JOIN CL_DAYINFO D
+    ON A.CO_DIV = D.CO_DIV
+    AND A.BK_DAY = D.CL_SOLAR
+    LEFT OUTER JOIN (
+    SELECT
+        A.CO_DIV
+      , A.MN_AMOUNT_DIV
+      , A.START_TIME
+      , A.END_TIME
+      , A.YOIL
+      , IF(A.COS_CODE = 'Z', '%', A.COS_CODE) AS COS_CODE
+    FROM MN_MASTER_COST A
+    INNER JOIN (
+    SELECT B.CO_DIV
+    , MAX(GIJUN_DAY) GIJUN_DAY
+    FROM MN_MASTER_COST B
+    WHERE B.CO_DIV = #{coDiv}
+    AND GIJUN_DAY <![CDATA[<=]]> #{sDate}
+    GROUP BY B.CO_DIV
+    ) B
+    ON A.CO_DIV = B.CO_DIV
+    AND A.GIJUN_DAY = B.GIJUN_DAY
+    WHERE A.CO_DIV = #{coDiv}
+    AND A.MB_CO_DIV = #{coDiv}
+    AND A.MS_DIVISION = #{sDivision}
+    AND A.MS_CLASS = #{sClass}
+    AND A.MS_LEVEL = #{sLevel}
+    ) E
+    ON A.CO_DIV = E.CO_DIV
+    AND A.BK_TIME BETWEEN E.START_TIME AND E.END_TIME
+    AND IF(D.CL_BUSINESS = '4', '8', D.CL_DAYDIV) = E.YOIL
+    AND A.BK_COS LIKE E.COS_CODE
+    LEFT OUTER JOIN (
+    SELECT
+        CO_DIV
+      , MN_DAY
+      , MN_COS
+      , MN_TIME
+      , MN_AMOUNT_DIV
+    FROM MN_COST_SALE
+    WHERE CO_DIV = #{coDiv}
+    AND MN_DAY = #{sDate}
+    ) F
+    ON A.CO_DIV = F.CO_DIV
+    AND A.BK_DAY = F.MN_DAY
+    AND A.BK_COS = F.MN_COS
+    AND A.BK_TIME = F.MN_TIME
+    LEFT OUTER JOIN (
+    SELECT
+        CO_DIV
+      , CD_CODE
+      , CD_TITLE1
+    FROM CD_COMMON
+    WHERE CO_DIV = #{coDiv}
+    AND CD_DIVISION = '004'
+    ) G
+    ON E.CO_DIV = G.CO_DIV
+    AND E.MN_AMOUNT_DIV = G.CD_CODE
+    LEFT OUTER JOIN (
+    SELECT
+        CO_DIV
+      , CD_CODE
+      , CD_TITLE1
+    FROM CD_COMMON
+    WHERE CO_DIV = #{coDiv}
+    AND CD_DIVISION = '004'
+    ) H
+    ON F.CO_DIV = H.CO_DIV
+    AND F.MN_AMOUNT_DIV = H.CD_CODE
+    WHERE A.CO_DIV = #{coDiv}
+    AND A.BK_DAY = #{sDate}
+    <if test=' !sCos.equals("All") '>
+      AND A.BK_COS = #{sCos}
+    </if>
+    AND IFNULL(NULLIF(A.BK_NAME, ''), '') = ''
+    AND IFNULL(NULLIF(A.BK_MSNUM, ''), '') = ''
+    AND IFNULL(NULLIF(A.BK_YN, ''), 'N') = 'N'
+    AND (TIMESTAMPDIFF(minute, NVL(A.BK_LOCKTIME, NOW()), NOW()) > 5
+    OR IFNULL(A.BK_LOCKTIME, '') = '')
+    ORDER BY A.BK_TIME, A.BK_COS
+  </select>
+
+  <select id="getTeeQuery2" parameterType="hashmap" resultType="int">
+    SELECT CL_MONTH_WEEK
+    FROM CL_DAYINFO
+    WHERE CO_DIV = #{coDiv}
+      AND CL_SOLAR = #{sDate}
+  </select>
+
+  <select id="getTeeQuery3" parameterType="hashmap" resultType="hashmap">
+    SELECT IFNULL(SUM(IF(CL.CL_BUSINESS = '1', 1, 0)), 0)     WEEK_DAY_CNT
+         , IFNULL(SUM(IF(CL.CL_BUSINESS <![CDATA[<>]]> '1', 1, 0)), 0) WEEK_END_CNT
+    FROM BK_HISTORY BK
+           INNER JOIN (SELECT CO_DIV, CL_SOLAR, CL_BUSINESS
+                       FROM CL_DAYINFO
+                       WHERE CO_DIV = #{coDiv}
+                         AND CL_SOLAR BETWEEN DATE_FORMAT(DATE_ADD(#{sDate}, INTERVAL -7 DAY), '%Y%m%d') AND DATE_FORMAT(DATE_ADD(#{sDate}, INTERVAL 7 DAY), '%Y%m%d')
+                         AND CL_MONTH_WEEK = #{monthWeek}) CL
+                      ON BK.CO_DIV = CL.CO_DIV
+                        AND BK.BK_DAY = CL.CL_SOLAR
+    WHERE BK.CO_DIV = #{coDiv}
+      AND BK.BK_DAY BETWEEN DATE_FORMAT(DATE_ADD(#{sDate}, INTERVAL -7 DAY), '%Y%m%d') AND DATE_FORMAT(DATE_ADD(#{sDate}, INTERVAL 7 DAY), '%Y%m%d')
+      AND BK.BK_MSNUM LIKE CONCAT(SUBSTR(#{msNum}, 1, 10), '%')
+      AND BK.RAIN_CHK = 'N'
+      AND BK.BK_NAME  <![CDATA[<>]]> ''
+  </select>
+
+  <select id="reservationQuery1" parameterType="hashmap" resultType="hashmap">
+    SELECT
+           MS_NAME
+         , MS_DIVISION
+         , MS_CLASS
+         , MS_LEVEL
+         , CONCAT(MS_FIRST_PHONE1
+      , CAST(AES_DECRYPT(UNHEX(MS_MID_PHONE1), 'JBOG') AS CHAR)
+      , MS_LAST_PHONE1)                                            AS MS_PHONE1
+         , MS_FIRST_PHONE1
+         , CAST(AES_DECRYPT(UNHEX(MS_MID_PHONE1), 'JBOG') AS CHAR) AS MS_MID_PHONE1
+         , MS_LAST_PHONE1
+    FROM MS_MAININFO
+    WHERE MS_NUM = #{msNum}
+  </select>
+
+  <select id="vCount1" parameterType="hashmap" resultType="int">
+    SELECT COUNT(*)
+    FROM BK_HISTORY
+    WHERE CO_DIV = #{coDiv}
+      AND BK_DAY = #{sDate}
+      AND BK_COS = #{sCos}
+      AND BK_TIME = #{sTime}
+      AND (IFNULL(NULLIF(BK_NAME, ''), 'X') <![CDATA[<>]]> 'X'
+      OR BK_YN = 'Y'
+      OR TIMESTAMPDIFF(MINUTE, IFNULL(IFNULL(BK_LOCKTIME, ''), DATE_ADD(NOW(), INTERVAL -5 MINUTE)),
+                               NOW()) <![CDATA[<]]> 6)
+  </select>
+
+  <select id="vCount2" parameterType="hashmap" resultType="int">
+    SELECT COUNT(BL_MSNUM)
+    FROM BL_BREACH
+    WHERE CO_DIV = #{coDiv}
+      AND BL_MSNUM = #{msNum}
+      AND BL_BK_NOSTART <![CDATA[<=]]> DATE_FORMAT(NOW(), '%Y%m%d')
+      AND BL_BK_NOEND > DATE_FORMAT(NOW(), '%Y%m%d')
+      AND (IFNULL(BL_CONF, 'N') = 'N' OR IFNULL(BL_CONF, 'B') = 'B')
+  </select>
+
+  <select id="vCount3" parameterType="hashmap" resultType="int">
+    SELECT COUNT(*)
+    FROM BK_HISTORY
+    WHERE CO_DIV = #{coDiv}
+      AND BK_MEMORIALYN = DATE_FORMAT(NOW(), '%Y%m%d')
+      AND BK_MSNUM = #{msNum}
+  </select>
+
+  <update id="reservationQuery2" parameterType="hashmap">
+    UPDATE BK_HISTORY
+    SET BK_RSVNO        = NVL(BK_RSVNO, NEXTVAL(#{coDiv}, 'G', 'BK_HISTORY_SEQ'))
+      , BK_MSNUM        = #{msNum}
+      , BK_NAME         = #{msName}
+      , BK_MEDIA_TEMP   = BK_MEDIA
+      , BK_MEDIA        = #{sMedia}
+      , BK_DIVISION     = '1'
+      , BK_FIRST_PHONE1 = #{msPhone1}
+      , BK_MID_PHONE1   = HEX(AES_ENCRYPT(#{msPhone2}, 'JBOG'))
+      , BK_LAST_PHONE1  = #{msPhone3}
+      , BK_CHARGE       = #{sCharge}
+      , BK_FIRST_DAY    = NVL(BK_FIRST_DAY, DATE_FORMAT(NOW(), '%Y%m%d%H%i%s'))
+      , BK_AREA         = DATE_FORMAT(NOW(), '%Y%m%d')
+      , BK_MEMORIALYN   = DATE_FORMAT(NOW(), '%Y%m%d')
+      , BK_MS_DIV       = #{msDivision}
+      , BK_MS_CLASS     = #{msClass}
+      , BK_MS_LEVEL     = #{msLevel}
+      , BK_MS_YN        = '2'
+      , BK_MARKET_CD    = #{marketCd}
+      , BK_BUSINESS_CD  = #{businessCd}
+      , BK_SMSSEND1     = 'Y'
+      , UPDATE_STAFF    = 'HOMEPAGE'
+      , UPDATE_DATETIME = NOW()
+      , UPDATE_IP       = #{ip}
+    WHERE CO_DIV = #{coDiv}
+      AND BK_DAY = #{sDate}
+      AND BK_COS = #{sCos}
+      AND BK_TIME = #{sTime}
+      AND IFNULL(NULLIF(BK_NAME, ''), '') = ''
+  </update>
+
+  <select id="vCount4" parameterType="hashmap" resultType="int">
+    SELECT COUNT(*)
+    FROM BK_HISTORY
+    WHERE CO_DIV = #{coDiv}
+      AND BK_DAY = #{sDate}
+      AND BK_COS = #{sCos}
+      AND BK_TIME = #{sTime}
+      AND BK_NAME = #{msName}
+  </select>
+
+  <select id="bkSeq" parameterType="hashmap" resultType="int">
+    SELECT IFNULL(MAX(BK_SEQ), 0) + 1
+    FROM BK_HISTORY_LOG
+    WHERE CO_DIV = #{coDiv}
+      AND BK_DAY = #{sDate}
+  </select>
+
+  <insert id="reservationQuery3" parameterType="hashmap">
+    INSERT INTO BK_HISTORY_LOG(CO_DIV, BK_DAY, BK_COS, BK_TIME, BK_SEQ, BK_RSVNO,
+                               BK_NAME, BK_MSNUM, BK_PART, BK_GPNUM, BK_ROUNDF, BK_MEDIA,
+                               BK_PERSON, BK_FIRST_PHONE1, BK_MID_PHONE1, BK_LAST_PHONE1,
+                               BK_SMSSEND1, BK_FIRST_PHONE2,
+                               BK_MID_PHONE2, BK_LAST_PHONE2, BK_SMSSEND2, BK_TEL, BK_RM_NUM,
+                               BK_CART,
+                               BK_CART_CNT, BK_MAC_ADDR, BK_CHARGE, BK_CS, BK_RING, BK_CERT_NUM,
+                               BK_REMARK, BK_REMARK2, INPUT_STAFF, INPUT_DATETIME, INPUT_IP,
+                               UPDATE_STAFF,
+                               UPDATE_DATETIME, UPDATE_IP, BK_SUB_CD, BK_SUB_NAME, BK_EVENT,
+                               BK_LOG_DIV, BK_FIRST_DAY,
+                               BK_MS_DIV, BK_MS_CLASS, BK_MS_LEVEL, BK_MS_YN, BK_MARKET_CD,
+                               BK_BUSINESS_CD, BK_COMP_CD)
+    SELECT CO_DIV,
+           BK_DAY,
+           BK_COS,
+           BK_TIME,
+           #{bkSeq},
+           BK_RSVNO,
+           BK_NAME,
+           BK_MSNUM,
+           BK_PART,
+           BK_GPNUM,
+           BK_ROUNDF,
+           BK_MEDIA,
+           BK_PERSON,
+           BK_FIRST_PHONE1,
+           BK_MID_PHONE1,
+           BK_LAST_PHONE1,
+           BK_SMSSEND1,
+           BK_FIRST_PHONE2,
+           BK_MID_PHONE2,
+           BK_LAST_PHONE2,
+           BK_SMSSEND2,
+           BK_TEL,
+           BK_RM_NUM,
+           BK_CART,
+           BK_CART_CNT,
+           BK_MAC_ADDR,
+           BK_CHARGE,
+           BK_CS,
+           BK_RING,
+           BK_CERT_NUM,
+           BK_REMARK,
+           BK_REMARK2,
+           INPUT_STAFF,
+           INPUT_DATETIME,
+           INPUT_IP,
+           UPDATE_STAFF,
+           UPDATE_DATETIME,
+           UPDATE_IP,
+           BK_SUB_CD,
+           BK_SUB_NAME,
+           BK_EVENT,
+           'I',
+           BK_FIRST_DAY,
+           BK_MS_DIV,
+           BK_MS_CLASS,
+           BK_MS_LEVEL,
+           BK_MS_YN,
+           BK_MARKET_CD,
+           BK_BUSINESS_CD,
+           BK_COMP_CD
+    FROM BK_HISTORY
+    WHERE CO_DIV = #{coDiv}
+      AND BK_DAY = #{sDate}
+      AND BK_COS = #{sCos}
+      AND BK_TIME = #{sTime}
+      AND BK_NAME = #{msName}
+  </insert>
+
+  <select id="getReservationList" parameterType="hashmap" resultType="hashmap">
+    SELECT B.BK_DAY
+         , B.BK_TIME
+         , B.BK_COS
+         , C.CD_TITLE1                                                             AS    BK_COS_NM
+         , B.BK_RSVNO
+         , B.BK_NAME
+         , CASE WHEN IFNULL(NULLIF(B.BK_ROUNDF, ''), '1') = '1' THEN '18홀' ELSE '9홀' END BK_ROUNDF
+         , B.BK_MEDIA
+         , B.BK_PERSON
+         , B.BK_FIRST_PHONE1
+         , TRIM(CAST(AES_DECRYPT(UNHEX(B.BK_MID_PHONE1), 'JBOG') AS CHAR))         AS    BK_MID_PHONE1
+         , B.BK_LAST_PHONE1
+         , B.BK_CHARGE
+         , D.CD_TITLE1                                                             AS    BK_CHARGE_NM
+         , IF(B.BK_DAY > DATE_FORMAT(NOW(), '%Y%m%d'), 'Y', 'N')                   AS    CHANGE_YN
+         , DATEDIFF(B.BK_DAY, NOW())                                               AS    CANCEL_DIFF
+         , CASE
+             WHEN IFNULL(NULLIF(B.BK_CS, ''), 'N') = 'C' THEN '인턴캐디'
+             WHEN IFNULL(NULLIF(B.BK_CS, ''), 'N') = 'Y' THEN '캐디'
+             ELSE '셀프' END                                                               BK_CADDY
+         , CASE WHEN B.BK_DAY > DATE_FORMAT(NOW(), '%Y%m%d') THEN 'Y' ELSE 'N' END AS    AFTER_YN
+    FROM BK_HISTORY B
+           INNER JOIN CD_COMMON C
+                      ON B.CO_DIV = C.CO_DIV
+                        AND B.BK_COS = C.CD_CODE
+                        AND C.CD_DIVISION = '012'
+           LEFT OUTER JOIN CD_COMMON D
+                           ON B.CO_DIV = D.CO_DIV
+                             AND B.BK_CHARGE = D.CD_CODE
+                             AND D.CD_DIVISION = '004'
+           LEFT OUTER JOIN CL_DAYINFO E
+                           ON B.CO_DIV = E.CO_DIV
+                             AND B.BK_DAY = E.CL_SOLAR
+    WHERE B.CO_DIV = #{coDiv}
+      AND B.BK_MSNUM = #{msNum}
+      AND B.BK_DAY >= CONCAT(DATE_FORMAT(NOW(), '%Y%m'), '01')
+      AND B.BK_ROUNDF NOT IN ('3', '4')
+    ORDER BY B.BK_DAY
+  </select>
+
+  <select id="cancelReservationQuery1" parameterType="hashmap" resultType="hashmap">
+    SELECT
+          MS_NAME
+        , CONCAT(MS_FIRST_PHONE1
+        , CAST(AES_DECRYPT(UNHEX(MS_MID_PHONE1),'JBOG') AS CHAR)
+        , MS_LAST_PHONE1) AS MS_PHONE1
+    FROM MS_MAININFO
+    WHERE MS_NUM = #{msNum}
+  </select>
+
+  <select id="cancelReservationQuery2" parameterType="hashmap" resultType="int">
+    SELECT DATEDIFF(#{sDate}, NOW()) AS CANCEL_DIFF
+  </select>
+
+  <select id="cancelReservationQuery3" parameterType="hashmap" resultType="String" statementType="CALLABLE">
+    CALL SP_HOMEPAGE_BOOKING_CANCEL(
+        #{coDiv,mode=IN,jdbcType=VARCHAR}
+       , #{sDate,mode=IN,jdbcType=VARCHAR}
+       , #{sCos,mode=IN,jdbcType=VARCHAR}
+       , #{sTime,mode=IN,jdbcType=VARCHAR}
+       , #{msNum,mode=IN,jdbcType=VARCHAR}
+       , #{ip,mode=IN,jdbcType=VARCHAR}
+       , #{RESULT,mode=OUT,jdbcType=VARCHAR}
+    )
+  </select>
+
+  <select id="changeReservation1" parameterType="hashmap" resultType="int">
+    SELECT COUNT(*) AS CNT
+    FROM BK_HISTORY
+    WHERE CO_DIV   = #{coDiv}
+      AND BK_DAY   = #{bDate}
+      AND BK_COS   = #{bCos}
+      AND BK_TIME  = #{bTime}
+      AND BK_MSNUM = #{msNum}
+  </select>
+
+  <select id="changeReservation2" parameterType="hashmap" resultType="String" statementType="CALLABLE">
+    CALL SP_BOOK0100_BK_HISTORY_COPY(
+      #{coDiv,mode=IN,jdbcType=VARCHAR}
+      , #{aDate,mode=IN,jdbcType=VARCHAR}
+      , #{aCos,mode=IN,jdbcType=VARCHAR}
+      , #{aTime,mode=IN,jdbcType=VARCHAR}
+      , #{bDate,mode=IN,jdbcType=VARCHAR}
+      , #{bCos,mode=IN,jdbcType=VARCHAR}
+      , #{bTime,mode=IN,jdbcType=VARCHAR}
+      , #{M,mode=IN,jdbcType=VARCHAR}
+      , #{HOMEPAGE,mode=IN,jdbcType=VARCHAR}
+      , #{ip,mode=IN,jdbcType=VARCHAR}
+      , #{RESULT,mode=OUT,jdbcType=VARCHAR}
+      )
+  </select>
+
+</mapper>

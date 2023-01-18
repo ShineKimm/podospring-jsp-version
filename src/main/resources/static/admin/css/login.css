@@ -1,0 +1,31 @@
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td,select,option,checkbox,text,p { margin:0; padding:0;font:12px/1.2 Dotum,"돋움",sans-serif;}
+table {	border-collapse:collapse; border-spacing:0;}
+fieldset,img { border:0;}
+address,caption,cite,code,dfn,em,strong,th,var,let { font-style:normal;	font-weight:normal;}
+ol,ul,li {	list-style:none;}
+caption {display:none;}
+h1,h2,h3,h4,h5,h6 {	font-size:100%;	font-weight:normal;padding:none;margin:none;}
+q:before,q:after {content:'';}
+abbr,acronym { border:0;}
+img, li { vertical-align: middle;}
+hr,.hidden{display:none;}
+.bold{font-weight:bold;}
+a,img,div,ul,li,input{outline:none; selector-dummy: expression(this.hideFocus=true);vertical-align: middle;text-decoration:none; display:block;} /* 테두리점선 컨트롤(no) */
+a:link {color:black;}
+
+#wrap {width:100%;height:250px;margin:210px auto;background:url('/admin/images/bg.jpg');}
+#login {width:500px;height:180px;border:1px solid #d2d2d2;background:#fafafa;margin:0 auto;box-shadow:1px 1px 6px #222222;}
+.title {margin:10px 0;padding-top:20px;text-align:center;color:white;font-weight:bold;font-size:11pt;text-shadow:1px 1px 1px black;}
+#login .register {padding:34px 80px 0 100px;}
+#login .register li {float:left;}
+#login .register .name {margin-right:15px;}
+#login .register .name div {margin-top:12px;}
+#login .register .box {margin-right:7px;}
+#login .register .box div {margin-top:5px;}
+#login .register .box input {width:165px;height:21px;line-height:21px;*height:19px;*line-height:19px;border:1px solid #c1c1c1;}
+#login .register .btnlogin {margin-top:5px;padding:18px;background:#4b545e;color:white;}
+#login .save {clear:both;padding:15px 90px 0 90px;*padding:3px 90px 0 90px;}
+#login .save li {float:left;margin-left:4px;font-size:9pt;}
+#login .save .left {margin-left:12px;}
+#login .save .left2 {margin-left:12px;*padding-top:5px;}
+#login .save .space2 {*padding-top:5px;}

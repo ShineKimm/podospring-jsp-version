@@ -1,0 +1,14 @@
+파일 배포 --
+1. 로그 경로 >>
+C:\Users\김대영\logs\app
+2. 파일 업로드/다운로드 경로 >>
+C:\uploads
+3. Static 폴더위치 >>
+C:\dev\podo-spring\src\main\webapp
+
+---------------------------
+1. boot war 배포
+C:\dev\web_was\apache-tomcat-9.0.65\bin
+tomcat9.exe 실행
+
+http://localhost:8088/

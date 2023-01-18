@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="board">
+
+  <select id="query1" parameterType="hashmap" resultType="hashmap">
+    SELECT
+        H.CO_DIV
+      , H.TYPE
+      , H.IDX
+      , H.TITLE
+      , H.BOARD_DIV
+      , H.JOIN_STATUS
+      , CAST(H.CONTENT AS CHAR(10000) CHARACTER SET UTF8) AS CONTENT
+      , H.BK_DAY
+      , H.BK_TIME
+      , H.BK_PERSON
+      , H.BK_FIRST_PHONE
+      , CAST(AES_DECRYPT(UNHEX(H.BK_MID_PHONE),'JBOG') AS CHAR)
+      , H.BK_LAST_PHONE
+      , H.LINK
+      <choose>
+        <when test='sType == "6"'>
+          , IFNULL(NULLIF(U.MS_NAME, ''), '') AS WRITER_NAME
+        </when>
+        <otherwise>
+          , IFNULL(NULLIF(U.USER_NAME, ''), '관리자') AS WRITER_NAME
+        </otherwise>
+      </choose>
+      , DATE_FORMAT(H.INPUT_DATETIME, '%Y.%m.%d') AS INPUT_DATETIME
+      , IFNULL(NULLIF(D.FILE_NAME1, ''), '') AS FILE_NAME1
+      , IFNULL(NULLIF(D.FILE_PATH1, ''), '') AS FILE_PATH1
+      , IFNULL(NULLIF(D.FILE_NAME2, ''), '') AS FILE_NAME2
+      , IFNULL(NULLIF(D.FILE_PATH2, ''), '') AS FILE_PATH2
+      , IFNULL(NULLIF(D.FILE_NAME3, ''), '') AS FILE_NAME3
+      , IFNULL(NULLIF(D.FILE_PATH3, ''), '') AS FILE_PATH3
+      , IFNULL(NULLIF(D.ATTACH_CNT, 0), 0) AS ATTACH_CNT
+      , H.VIEW_CNT
+      , H.DEL_DIV
+      , H.POSITION_X
+      , H.POSITION_Y
+    FROM HP_BOARD H
+      <choose>
+        <when test='sType == "6"'>
+          LEFT OUTER JOIN MS_MAININFO U
+          ON H.INPUT_STAFF = U.MS_NUM
+        </when>
+        <otherwise>
+          LEFT OUTER JOIN USER_INFO U
+          ON H.INPUT_STAFF = U.USER_STAFF
+        </otherwise>
+      </choose>
+    LEFT OUTER JOIN (
+    SELECT
+        CO_DIV
+      , TYPE
+      , IDX
+      , IFNULL(NULLIF(FILE_NAME1, ''), '') AS FILE_NAME1
+      , IFNULL(NULLIF(FILE_PATH1, ''), '') AS FILE_PATH1
+      , IFNULL(NULLIF(FILE_NAME2, ''), '') AS FILE_NAME2
+      , IFNULL(NULLIF(FILE_PATH2, ''), '') AS FILE_PATH2
+      , IFNULL(NULLIF(FILE_NAME3, ''), '') AS FILE_NAME3
+      , IFNULL(NULLIF(FILE_PATH3, ''), '') AS FILE_PATH3
+      , IF(IFNULL(NULLIF(FILE_NAME2, ''), '') = '', 0, 1)
+      + IF(IFNULL(NULLIF(FILE_NAME3, ''), '') = '', 0, 1) AS ATTACH_CNT
+    FROM HP_BOARD_ATTACH
+    ) D
+      ON H.CO_DIV = D.CO_DIV
+      AND H.TYPE = D.TYPE
+      AND H.IDX = D.IDX
+      WHERE H.CO_DIV = #{coDiv}
+      AND H.TYPE = #{sType}
+      <if test='adminYn != "Y"'>
+        AND H.DEL_DIV = '0'
+      </if>
+      <if test='boardDiv != null and !boardDiv.equals("")'>
+        AND H.BOARD_DIV = #{boardDiv}
+      </if>
+      <if test='stDate != null and !stDate.equals("") and edDate != null and !edDate.equals("")'>
+        AND H.BK_DAY BETWEEN #{stDate} AND #{edDate}
+      </if>
+      <if test='searchText != null and !searchText.equals("") '>
+        <choose>
+          <when test='searchOption == "title"'>
+            AND H.TITLE LIKE CONCAT('%',#{searchText},'%')
+          </when>
+          <when test='searchOption == "content"'>
+            AND CAST(H.CONTENT AS CHAR(10000) CHARACTER SET UTF8) LIKE CONCAT('%',#{searchText},'%')
+          </when>
+          <when test='searchOption == "writer"'>
+            AND U.USER_NAME LIKE CONCAT('%',#{searchText},'%')
+          </when>
+        </choose>
+      </if>
+    ORDER BY H.IDX DESC
+    LIMIT ${startCnt}, ${pageCnt}
+  </select>
+
+  <select id="query2" parameterType="hashmap" resultType="int">
+    SELECT COUNT(*) TOTAL_CNT
+    FROM HP_BOARD H
+      <choose>
+        <when test='sType == "6"'>
+          LEFT OUTER JOIN MS_MAININFO U
+          ON H.INPUT_STAFF = U.MS_NUM
+        </when>
+        <otherwise>
+          LEFT OUTER JOIN USER_INFO U
+          ON H.INPUT_STAFF = U.USER_STAFF
+        </otherwise>
+      </choose>
+    LEFT OUTER JOIN (
+    SELECT
+      CO_DIV
+      , TYPE
+      , IDX
+      , IFNULL(NULLIF(FILE_NAME1, ''), '') AS FILE_NAME1
+      , IFNULL(NULLIF(FILE_PATH1, ''), '') AS FILE_PATH1
+      , IF(IFNULL(NULLIF(FILE_NAME2, ''), '') = '', 0, 1)
+      + IF(IFNULL(NULLIF(FILE_NAME3, ''), '') = '', 0, 1) AS ATTACH_CNT
+    FROM HP_BOARD_ATTACH
+    ) D
+      ON H.CO_DIV = D.CO_DIV
+      AND H.TYPE = D.TYPE
+      AND H.IDX = D.IDX
+      WHERE H.CO_DIV = #{coDiv}
+      <if test='adminYn != "Y"'>
+        AND H.DEL_DIV = '0'
+      </if>
+      AND H.TYPE = #{type}
+      <if test='boardDiv != null and !boardDiv.equals("")'>
+        AND H.BOARD_DIV = #{boardDiv}
+      </if>
+      <if test='stDate != null and !stDate.equals("") and edDate != null and !edDate.equals("")'>
+        AND H.BK_DAY BETWEEN #{stDate} AND #{edDate}
+      </if>
+      <if test='searchText != null and !searchText.equals("") '>
+        <choose>
+          <when test='searchOption == "title"'>
+            AND H.TITLE LIKE CONCAT('%',#{searchText},'%')
+          </when>
+          <when test='searchOption == "content"'>
+            AND CAST(H.CONTENT AS CHAR(10000) CHARACTER SET UTF8) LIKE CONCAT('%',#{searchText},'%')
+          </when>
+          <when test='searchOption == "writer"'>
+            AND U.USER_NAME LIKE CONCAT('%',#{searchText},'%')
+          </when>
+        </choose>
+      </if>
+  </select>
+
+  <select id="getBoardDetail" parameterType="hashmap" resultType="hashmap">
+    SELECT
+        H.CO_DIV
+      , H.TYPE
+      , H.IDX
+      , H.TITLE
+      , CAST(H.CONTENT AS CHAR(10000) CHARACTER SET UTF8) AS CONTENT
+      , H.BOARD_DIV
+      , H.JOIN_STATUS
+      , H.BK_DAY
+      , H.BK_TIME
+      , H.BK_PERSON
+      , H.BK_FIRST_PHONE
+      , CAST(AES_DECRYPT(UNHEX(H.BK_MID_PHONE),'JBOG') AS CHAR) AS BK_MID_PHONE
+      , H.BK_LAST_PHONE
+      , H.LINK
+      , H.INPUT_STAFF
+      <choose>
+        <when test='sType == "6"'>
+          , IFNULL(NULLIF(U.MS_NAME, ''), '') AS WRITER_NAME
+        </when>
+        <otherwise>
+          , IFNULL(NULLIF(U.USER_NAME, ''), '관리자') AS WRITER_NAME
+        </otherwise>
+      </choose>
+      , DATE_FORMAT(H.INPUT_DATETIME, '%Y-%m-%d') AS INPUT_DATETIME
+      , IFNULL(NULLIF(H.VIEW_CNT, 0), 0) AS VIEW_CNT
+      , IFNULL(NULLIF(A.FILE_NAME1, ''), '') AS FILE_NAME1
+      , IFNULL(NULLIF(A.ORIGIN_FILE_NAME1, ''), '') AS ORIGIN_FILE_NAME1
+      , IFNULL(NULLIF(A.FILE_PATH1, ''), '') AS FILE_PATH1
+      , IFNULL(NULLIF(A.FILE_NAME2, ''), '') AS FILE_NAME2
+      , IFNULL(NULLIF(A.ORIGIN_FILE_NAME2, ''), '') AS ORIGIN_FILE_NAME2
+      , IFNULL(NULLIF(A.FILE_PATH2, ''), '') AS FILE_PATH2
+      , IFNULL(NULLIF(A.FILE_NAME3, ''), '') AS FILE_NAME3
+      , IFNULL(NULLIF(A.ORIGIN_FILE_NAME3, ''), '') AS ORIGIN_FILE_NAME3
+      , IFNULL(NULLIF(A.FILE_PATH3, ''), '') AS FILE_PATH3
+      , H.POSITION_X
+      , H.POSITION_Y
+    FROM HP_BOARD H
+      <choose>
+        <when test='sType == "6"'>
+          LEFT OUTER JOIN MS_MAININFO U
+          ON H.INPUT_STAFF = U.MS_NUM
+        </when>
+        <otherwise>
+          LEFT OUTER JOIN USER_INFO U
+          ON H.INPUT_STAFF = U.USER_STAFF
+        </otherwise>
+      </choose>
+      LEFT OUTER JOIN HP_BOARD_ATTACH A
+      ON H.CO_DIV = A.CO_DIV
+      AND H.TYPE = A.TYPE
+      AND H.IDX = A.IDX
+      WHERE H.CO_DIV = #{coDiv}
+      AND H.TYPE = #{sType}
+      AND H.IDX = #{sIdx}
+  </select>
+
+  <update id="ReCnt" parameterType="hashmap">
+    UPDATE HP_BOARD H
+    SET VIEW_CNT = IFNULL(NULLIF(H.VIEW_CNT, 0), 0) + 1
+      WHERE CO_DIV = #{coDiv}
+        AND TYPE = #{sType}
+        AND IDX = #{sIdx}
+  </update>
+
+  <select id="idx" parameterType="hashmap" resultType="int">
+    SELECT IFNULL(NULLIF(MAX(IDX), 0), 0) + 1 AS IDX
+    FROM HP_BOARD
+    WHERE CO_DIV = #{coDiv}
+      AND TYPE = #{sType}
+  </select>
+
+  <insert id="writeBoardQuery2" parameterType="hashmap">
+    INSERT INTO HP_BOARD (CO_DIV, TYPE, IDX,
+                          TITLE, CONTENT, DEL_DIV,
+                          BK_DAY, BK_TIME, BK_PERSON,
+                          BK_FIRST_PHONE, BK_MID_PHONE, BK_LAST_PHONE,
+                          VIEW_CNT, BOARD_DIV, INPUT_STAFF,
+                          INPUT_DATETIME, INPUT_IP, UPDATE_STAFF,
+                          UPDATE_DATETIME, UPDATE_IP, LINK,
+                          JOIN_STATUS
+                        <if test='POSITION_X != null and !POSITION_X.equals("")'>
+                          ,POSITION_X
+                        </if>
+                        <if test='POSITION_Y != null and !POSITION_Y.equals("")'>
+                          ,POSITION_Y
+                        </if>
+                          )
+    VALUES (#{coDiv}, #{sType}, #{idx},
+            #{title}, #{content}, '0',
+            #{bkDay}, #{bkTime}, #{bkPerson},
+            #{phone1}, HEX(AES_ENCRYPT(#{phone2}, 'JBOG')), #{phone3},
+            0, #{boardDiv}, #{staff},
+            NOW(), #{ipAddr}, #{staff},
+            NOW(), #{ipAddr}, #{link},
+            #{joinStatus}
+            <if test='POSITION_X != null and !POSITION_X.equals("")'>
+              , #{POSITION_X}
+            </if>
+            <if test='POSITION_Y != null and !POSITION_Y.equals("")'>
+              , #{POSITION_Y}
+            </if>
+            )
+
+
+  </insert>
+  <insert id="writeBoardQuery3" parameterType="hashmap">
+    INSERT INTO HP_BOARD_ATTACH (CO_DIV, TYPE, IDX,
+                                 FILE_NAME1, ORIGIN_FILE_NAME1, FILE_PATH1,
+                                 FILE_NAME2, ORIGIN_FILE_NAME2, FILE_PATH2,
+                                 FILE_NAME3, ORIGIN_FILE_NAME3, FILE_PATH3)
+    VALUES (#{coDiv}, #{sType}, #{idx},
+            #{fileName1}, #{originFileName1}, #{filePath1},
+            #{fileName2}, #{originFileName2}, #{filePath2},
+            #{fileName3}, #{originFileName3}, #{filePath3})
+  </insert>
+
+  <update id="updateQuery1" parameterType="hashmap">
+    UPDATE HP_BOARD
+    SET
+        TITLE           = #{title}
+      , CONTENT         = #{content}
+      , BOARD_DIV       = #{boardDiv}
+      , JOIN_STATUS     = #{joinStatus}
+      , BK_DAY          = #{bkDay}
+      , BK_TIME         = #{bkTime}
+      , BK_PERSON       = #{bkPerson}
+      , BK_FIRST_PHONE  = #{phone1}
+      , BK_MID_PHONE    = HEX(AES_ENCRYPT(#{phone2}, 'JBOG'))
+      , BK_LAST_PHONE   = #{phone3}
+      , LINK            = #{link}
+      , UPDATE_STAFF    = #{staff}
+      , UPDATE_DATETIME = NOW()
+      , UPDATE_IP       = #{ipAddr}
+      <if test='POSITION_X != null and !POSITION_X.equals("")'>
+        , POSITION_X    = #{POSITION_X}
+      </if>
+      <if test='POSITION_Y != null and !POSITION_Y.equals("")'>
+        , POSITION_Y    = #{POSITION_Y}
+      </if>
+    WHERE CO_DIV = #{coDiv}
+      AND TYPE = #{sType}
+      AND IDX = #{idx}
+  </update>
+
+  <update id="updateQuery2" parameterType="hashmap">
+    UPDATE HP_BOARD_ATTACH
+    SET
+        CO_DIV = CO_DIV
+      <if test=' fileName1 !=null '>
+        , FILE_NAME1 = #{fileName1}
+        , ORIGIN_FILE_NAME1 = #{originFileName1}
+        , FILE_PATH1 = #{filePath1}
+      </if>
+      <if test=' fileName2 !=null '>
+        , FILE_NAME2 = #{fileName2}
+        , ORIGIN_FILE_NAME2 = #{originFileName2}
+        , FILE_PATH2 = #{filePath2}
+      </if>
+      <if test=' fileName3 !=null '>
+        , FILE_NAME3 = #{fileName3}
+        , ORIGIN_FILE_NAME3 = #{originFileName3}
+        , FILE_PATH3 = #{filePath3}
+      </if>
+    WHERE CO_DIV = #{coDiv}
+    AND TYPE = #{sType}
+    AND IDX = #{idx}
+  </update>
+
+  <update id="doDelete" parameterType="hashmap">
+    UPDATE HP_BOARD
+    SET DEL_DIV = #{sDiv}
+    WHERE CO_DIV = #{coDiv}
+      AND TYPE = #{sType}
+      AND IDX = #{sIdx}
+  </update>
+
+  <select id="getJoinList" parameterType="hashmap" resultType="hashmap">
+    SELECT
+      H.CO_DIV
+      , H.TYPE
+      , H.IDX
+      , 0 AS SEQ
+      , H.TITLE
+      , CAST(H.CONTENT AS CHAR(10000) CHARACTER SET UTF8) AS CONTENT
+      , H.BOARD_DIV
+      , H.JOIN_STATUS
+      , IFNULL(NULLIF(U.MS_NAME, ''), '') AS WRITER_NAME
+      , DATE_FORMAT(H.INPUT_DATETIME, '%Y.%m.%d') AS INPUT_DATETIME
+      , H.VIEW_CNT
+      FROM HP_BOARD H
+      LEFT OUTER JOIN MS_MAININFO U
+      ON H.INPUT_STAFF = U.MS_NUM
+      WHERE H.CO_DIV = #{coDiv}
+      AND H.TYPE = #{sType}
+      AND H.DEL_DIV = '0'
+      AND H.BK_DAY BETWEEN #{stDate} AND #{edDate}
+      <if test='searchText != null and !searchText.equals("") '>
+        <choose>
+          <when test='searchOption.equals("title")'>
+            AND H.TITLE LIKE CONCAT('%',#{searchText},'%')
+          </when>
+          <when test='searchOption.equals("content")'>
+            AND CAST(H.CONTENT AS CHAR(10000) CHARACTER SET UTF8) LIKE CONCAT('%',#{searchText},'%')
+          </when>
+          <when test='searchOption.equals("writer")'>
+            AND U.MS_NAME = CONCAT('%',#{searchText},'%')
+          </when>
+          <otherwise>
+            LEFT OUTER JOIN USER_INFO U
+            ON H.INPUT_STAFF = U.USER_STAFF
+          </otherwise>
+        </choose>
+      </if>
+    ORDER BY IDX DESC, SEQ
+    LIMIT ${startCnt}, ${pageCnt}
+  </select>
+
+  <select id="joinTotalCnt" parameterType="hashmap" resultType="int">
+    SELECT COUNT(*) AS CNT
+    FROM HP_BOARD H
+    LEFT OUTER JOIN MS_MAININFO U
+    ON H.INPUT_STAFF = U.MS_ID
+    WHERE H.CO_DIV = #{coDiv}
+    AND H.TYPE = #{sType}
+    AND H.DEL_DIV = '0'
+    AND H.BK_DAY BETWEEN #{stDate} AND #{edDate}
+    <if test='searchText != null and !searchText.equals("") '>
+      <choose>
+        <when test='searchOption == "title"'>
+          AND H.TITLE LIKE CONCAT('%',#{searchText},'%')
+        </when>
+        <when test='searchOption == "content"'>
+          AND CAST(H.CONTENT AS CHAR(10000) CHARACTER SET UTF8) LIKE CONCAT('%',#{searchText},'%')
+        </when>
+        <when test='searchOption == "writer"'>
+          AND U.MS_NAME = CONCAT('%',#{searchText},'%')
+        </when>
+      </choose>
+    </if>
+  </select>
+
+  <select id="getReplyList" parameterType="hashmap" resultType="hashmap">
+    SELECT
+       H.CO_DIV
+     , H.TYPE
+     , H.IDX
+     , H.SEQ
+     , H.CONTENT
+     , H.BK_PERSON
+     , IFNULL(NULLIF(U.MS_NAME, ''), '')                        AS WRITER_NAME
+     , H.BK_FIRST_PHONE
+     , CAST(AES_DECRYPT(UNHEX(H.BK_MID_PHONE), 'JBOG') AS CHAR) AS BK_MID_PHONE
+     , H.BK_LAST_PHONE
+     , DATE_FORMAT(H.INPUT_DATETIME, '%Y.%m.%d')                AS INPUT_DATETIME
+     , H.INPUT_STAFF
+    FROM HP_BOARD_REPLY H
+    LEFT OUTER JOIN MS_MAININFO U
+    ON H.INPUT_STAFF = U.MS_NUM
+    WHERE H.CO_DIV = #{coDiv}
+      AND H.TYPE = #{sType}
+      AND H.IDX = #{sIdx}
+      AND H.DEL_DIV = '0'
+    ORDER BY H.SEQ ASC
+  </select>
+
+  <update id="doDeleteReply" parameterType="hashmap">
+    UPDATE HP_BOARD_REPLY
+    SET DEL_DIV = '1'
+    WHERE CO_DIV = #{coDiv}
+      AND TYPE = #{sType}
+      AND IDX = #{sIdx}
+      AND SEQ = #{sSeq}
+  </update>
+
+  <select id="writeReplySeq" parameterType="hashmap" resultType="int">
+    SELECT IFNULL(NULLIF(MAX(SEQ), 0), 0) + 1 AS SEQ
+    FROM HP_BOARD_REPLY
+    WHERE CO_DIV = #{coDiv}
+      AND TYPE = #{sType}
+      AND IDX = #{sIdx}
+  </select>
+
+  <insert id="writeReplyInsert" parameterType="hashmap">
+    INSERT INTO HP_BOARD_REPLY (CO_DIV, TYPE, IDX,
+                                SEQ, TITLE, CONTENT,
+                                DEL_DIV, INPUT_STAFF,
+                                INPUT_DATETIME, INPUT_IP, UPDATE_STAFF,
+                                UPDATE_DATETIME, UPDATE_IP)
+    VALUES (#{coDiv}, #{sType}, #{sIdx},
+            #{seq}, '', #{content},
+            '0', #{MS_NUM},
+            NOW(), #{ipAddr}, #{MS_NUM},
+            NOW(), #{ipAddr})
+  </insert>
+
+  <select id="getJoinCalendar1" parameterType="hashmap" resultType="hashmap">
+    SELECT
+      A.CL_SOLAR                      AS CL_SOLAR
+       , SUBSTRING(A.CL_SOLAR, 7, 2) + 0 AS DAYNUM
+       , A.CL_DAYDIV                     AS CL_DAYDIV
+       , A.CL_BUSINESS                   AS CL_BUSINESS
+       , IFNULL(B.TEAM_CNT_1, 0)         AS TEAM_CNT_1
+       , IFNULL(B.TEAM_CNT_2, 0)         AS TEAM_CNT_2
+    FROM CL_DAYINFO A
+           LEFT OUTER JOIN (SELECT CO_DIV
+                                 , BK_DAY
+                                 , SUM(IF(BOARD_DIV = '1', 1, 0)) AS TEAM_CNT_1
+                                 , SUM(IF(BOARD_DIV = '2', 1, 0)) AS TEAM_CNT_2
+                            FROM HP_BOARD
+                            WHERE CO_DIV = #{coDiv}
+                              AND TYPE = '6'
+                              AND DEL_DIV <![CDATA[<>]]> '1'
+                              AND BK_DAY LIKE CONCAT(#{selYm}, '%')
+                            GROUP BY CO_DIV, BK_DAY) B
+                           ON A.CO_DIV = B.CO_DIV
+                             AND A.CL_SOLAR = B.BK_DAY
+    WHERE A.CO_DIV = #{coDiv}
+      AND A.CL_SOLAR LIKE CONCAT(#{selYm}, '%')
+    GROUP BY A.CL_SOLAR
+    ORDER BY A.CL_SOLAR
+  </select>
+
+  <select id="boardHonor1" parameterType="hashmap" resultType="hashmap">
+    select DATE_FORMAT(NOW(),'%Y%m%d') NOWDATE, DATE_FORMAT(NOW(),'%W') NOWDAY, DATE_FORMAT(NOW(),'%H') NOWHOUR
+    from dual
+  </select>
+
+  <select id="boardHonor2" parameterType="hashmap" resultType="int">
+    SELECT COUNT(holl_msname)
+    FROM ms_hollhist
+    WHERE co_div = '501'
+    ORDER BY holl_day DESC, HOLL_SEQ
+  </select>
+
+  <select id="boardHonor3" parameterType="hashmap" resultType="hashmap">
+    SELECT
+        DATE_FORMAT(HOLL_DAY,'%Y.%m.%d') HOLL_DAY
+       , replace(HOLL_MSNAME, substr(HOLL_MSNAME, 2, 1), '*') HOLL_MSNAME
+       ,(case
+        when HOLL_DIV = '01' then '알바트로스'
+        when HOLL_DIV = '02' then '홀인원'
+        when HOLL_DIV = '03' then '이글'
+        end) as HOLL_DIV
+       , HOLL_COS
+       , HOLL_TIME
+       , HOLL_NO
+       , HOLL_BALL
+       , HOLL_CLUB
+       , HOLL_DIV
+       , CONCAT(HOLL_DONG1,' ',HOLL_DONG2,' ',HOLL_DONG3) as HOLL_DONG
+    FROM ms_hollhist
+    WHERE co_div = '501'
+      <if test='searchText != null and !searchText.equals("") '>
+        <choose>
+          <when test='searchOption == "title"'>
+            AND HOLL_MSNAME LIKE CONCAT('%',#{searchText},'%')
+          </when>
+          <when test='searchOption == "content"'>
+            AND HOLL_MSNAME LIKE CONCAT('%',#{searchText},'%')
+          </when>
+          <when test='searchOption == "writer"'>
+            AND HOLL_MSNAME LIKE CONCAT('%',#{searchText},'%')
+          </when>
+        </choose>
+      </if>
+    ORDER BY HOLL_DAY DESC, HOLL_SEQ
+    LIMIT ${startCnt}, ${pageCnt}
+  </select>
+
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="common">
+
+  <select id="getCommonCode" parameterType="hashmap" resultType="hashmap">
+    SELECT CO_DIV
+         , CD_DIVISION
+         , CD_CODE
+         , CD_TITLE1
+         , CD_TITLE2
+         , CD_TITLE3
+    FROM CD_COMMON
+    WHERE CO_DIV = #{coDiv}
+      AND CD_DIVISION = #{division}
+      AND CD_USEYN = 'Y'
+  </select>
+
+  <select id="deviceIdentification1" parameterType="hashmap" resultType="int">
+    Select COUNT(*)
+    from web_statics
+    WHERE S_DATE = DATE_FORMAT(NOW(), '%Y%m%d')
+  </select>
+
+  <insert id="deviceIdentification2" parameterType="hashmap">
+    insert into web_statics (s_date, s_web_cnt, s_mobile_cnt, s_android_cnt, s_ios_cnt)
+    values (
+            DATE_FORMAT(NOW(),'%Y%m%d')
+           , #{web_cnt}
+           , #{mobile_cnt}
+           , #{android_cnt}
+           , #{ios_cnt}
+           )
+  </insert>
+
+  <update id="deviceIdentification3" parameterType="hashmap">
+    update web_statics
+    set s_date = DATE_FORMAT(NOW(),'%Y%m%d')
+      , s_web_cnt = s_web_cnt + #{web_cnt}
+      , s_mobile_cnt = s_mobile_cnt + #{mobile_cnt}
+      , s_android_cnt = s_android_cnt + #{android_cnt}
+      , s_ios_cnt = s_ios_cnt + #{ios_cnt}
+    where s_date = DATE_FORMAT(NOW(),'%Y%m%d')
+  </update>
+
+</mapper>

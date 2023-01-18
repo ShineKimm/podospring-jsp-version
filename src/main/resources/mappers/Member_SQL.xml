@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="member">
+
+  <select id="doLoginCNT" parameterType="hashmap" resultType="int">
+    SELECT COUNT(*) AS CNT
+    FROM MS_MAININFO
+    WHERE MS_MAIN_CODIV = #{coDiv}
+      AND MS_ID = #{id}
+      AND IFNULL(NULLIF(MS_BLANK, ''), 'N') != 'Y'
+  </select>
+
+  <select id="verification" parameterType="hashmap" resultType="hashmap">
+    SELECT
+         MS_NUM
+       , MS_NAME
+    FROM MS_MAININFO
+    WHERE MS_MAIN_CODIV = #{coDiv}
+      AND MS_ID = #{id}
+      AND MS_PASSWORD = #{pw}
+      AND IFNULL(NULLIF(MS_BLANK, ''), 'N') != 'Y'
+  </select>
+
+  <update id="loginInformation" parameterType="hashmap">
+    update MS_MAININFO_DETAIL
+    SET LAST_LOGIN_DATETIME = NOW()
+      , MS_SESSION_KEY      = #{sessionID}
+    where MS_NUM = #{MS_NUM}
+  </update>
+
+  <select id="chkDuplicateId" parameterType="hashmap" resultType="int">
+    SELECT COUNT(*) AS CNT
+    FROM MS_MAININFO
+    WHERE MS_ID = #{id}
+  </select>
+
+  <select id="doCertification" parameterType="hashmap" resultType="int">
+    SELECT COUNT(*) CNT
+    FROM MS_MAININFO
+    WHERE MS_FIRST_PHONE1 = #{phone1}
+      AND MS_MID_PHONE1 = HEX(AES_ENCRYPT(#{phone2}, 'JBOG'))
+      AND MS_LAST_PHONE1 = #{phone3}
+      AND IFNULL(NULLIF(MS_BLANK, ''), 'N') = 'N'
+  </select>
+
+  <select id="doSignUp1" parameterType="hashmap" resultType="hashmap">
+    SELECT MS_ID
+    FROM MS_MAININFO
+    WHERE MS_FIRST_PHONE1 = #{phone1}
+      AND CAST(AES_DECRYPT(UNHEX(MS_MID_PHONE1), 'JBOG') AS CHAR) = #{phone2}
+      AND MS_LAST_PHONE1 = #{phone3}
+      AND IFNULL(NULLIF(MS_BLANK, ''), 'N') = 'N'
+  </select>
+
+  <select id="doSignUp2" parameterType="hashmap" resultType="String">
+    SELECT CONCAT(#{netDivision},
+                  LPAD(CAST(NEXTVAL('%', '', 'MS_MAININFO_SEQ') AS UNSIGNED), 8, 0),
+                  #{netClass}) MS_NUM
+  </select>
+
+  <select id="doSignUp3" parameterType="hashmap" resultType="String">
+    SELECT CD_TITLE1
+    FROM CD_COMMON
+    WHERE CO_DIV = #{501}
+      AND CD_DIVISION = '003'
+      AND CD_CODE = #{homeAddress1}
+  </select>
+
+  <insert id="doSignUp4" parameterType="hashmap">
+    INSERT INTO MS_MAININFO ( MS_NUM
+                            , MS_MAIN_CODIV
+                            , MS_DIVISION
+                            , MS_CLASS
+                            , MS_LEVEL
+                            , MS_ID
+                            , MS_PASSWORD
+                            , MS_NAME
+                            , MS_SEX
+                            , MS_BIRTH
+                            , MS_BIRTHYL
+                            , MS_FIRST_PHONE1
+                            , MS_MID_PHONE1
+                            , MS_LAST_PHONE1
+                            , MS_HOMEADDR1
+                            , SMS_CHK1
+                            , MS_EMAIL
+                            , MS_EMAIL_YN
+                            , MS_MKT_AGREE_YN
+                            , MS_MKT_AGREE_YN2
+                            , MS_MKT_AGREE_YN3
+                            , MS_FIRSTDAY
+                            , MS_CODIV_BRAND
+                            , MS_HYUPNUM
+                            , INPUT_STAFF
+                            , INPUT_DATETIME
+                            , INPUT_IP
+                            , UPDATE_STAFF
+                            , UPDATE_DATETIME
+                            , UPDATE_IP)
+    VALUES ( #{msNum}
+           , #{coDiv}
+           , #{netDivision}
+           , #{netClass}
+           , #{netLevel}
+           , #{id}
+           , SHA2(#{pw}, 256)
+           , #{name}
+           , #{sex}
+           , #{birth}
+           , #{birthYL}
+           , #{phone1}
+           , HEX(AES_ENCRYPT(#{phone2}, 'JBOG'))
+           , #{phone3}
+           , #{homeAddress}
+           , 'Y'
+           , HEX(AES_ENCRYPT(#{email}, 'JBOG'))
+           , #{chkMail}
+           , #{mkt1}
+           , #{mkt2}
+           , #{mkt3}
+           , DATE_FORMAT(NOW(), '%Y%m%d')
+           , '001'
+           , #{msNum}
+           , 'HOMEPAGE'
+           , NOW()
+           , #{ip}
+           , 'HOMEPAGE'
+           , NOW()
+           , #{ip})
+  </insert>
+
+  <insert id="doSignUp5" parameterType="hashmap">
+    INSERT INTO MS_MAININFO_DETAIL ( MS_NUM
+                                   , MS_AREA
+                                   , MS_LOGIN_CD
+                                   , MS_ID_IMSI_YN
+                                   , MS_ID_AGREE_YN
+                                   , INPUT_STAFF
+                                   , INPUT_DATETIME
+                                   , INPUT_IP
+                                   , UPDATE_STAFF
+                                   , UPDATE_DATETIME
+                                   , UPDATE_IP)
+    VALUES ( #{msNum}
+           , #{homeAddress1}
+           , 'LOCAL'
+           , 'N'
+           , 'Y'
+           , 'HOMEPAGE'
+           , NOW()
+           , #{ip}
+           , 'HOMEPAGE'
+           , NOW()
+           , #{ip})
+  </insert>
+
+  <select id="doSignUp6" parameterType="hashmap" resultType="int">
+    SELECT COUNT(*) CNT
+    FROM MS_BENEFIT B
+    WHERE CO_DIV = #{coDiv}
+      AND B.MS_DIVISION = #{netDivision}
+      AND B.MS_CLASS = #{netClass}
+      AND B.MS_LEVEL = #{netLevel}
+  </select>
+
+  <insert id="doSignUp7" parameterType="hashmap">
+    INSERT INTO MS_BENEFIT2
+      (CO_DIV, MS_NUM, MS_DIVISION, MB_ENTRUSTYN,
+       MB_ENTRUST_CNT, MB_WEEKDAY_CNT, MB_WEEKEND_CNT, MB_C_WEEKDAY_CNT, MB_C_WEEKEND_CNT,
+       MB_C_SPRING_CNT, MB_C_SUMMER_CNT, MB_C_FALL_CNT, MB_C_WINTER_CNT, MB_SG_DC_CNT,
+       MB_SP_DC_CNT, MB_AR_DC_CNT, MB_GH_DC_CNT, MS_SALE_CD,
+       INPUT_STAFF, INPUT_DATETIME, INPUT_IP, UPDATE_STAFF, UPDATE_DATETIME, UPDATE_IP)
+    SELECT CO_DIV,
+           #{msNum},
+           MS_DIVISION,
+           MB_ENTRUSTYN,
+           MB_ENTRUST_CNT,
+           MB_WEEKDAY_CNT,
+           MB_WEEKEND_CNT,
+           MB_C_WEEKDAY_CNT,
+           MB_C_WEEKEND_CNT,
+           0 MB_C_SPRING_CNT,
+           0 MB_C_SUMMER_CNT,
+           0 MB_C_FALL_CNT,
+           0 MB_C_WINTER_CNT,
+           0 MB_SG_DC_CNT,
+           0 MB_SP_DC_CNT,
+           0 MB_AR_DC_CNT,
+           0 MB_GH_DC_CNT,
+           '',
+           'HOMEPAGE',
+           NOW(),
+           #{ip},
+           'HOMEPAGE',
+           NOW(),
+           #{ip}
+    FROM MS_BENEFIT B
+    WHERE B.CO_DIV = #{coDiv}
+      AND B.MS_DIVISION = #{netDivision}
+      AND B.MS_CLASS = #{netClass}
+      AND B.MS_LEVEL = #{netLevel}
+  </insert>
+
+  <insert id="doSignUp8" parameterType="hashmap">
+    INSERT INTO MS_BENEFIT2
+      (CO_DIV, MS_NUM, MS_DIVISION, MB_ENTRUSTYN,
+       MB_ENTRUST_CNT, MB_WEEKDAY_CNT, MB_WEEKEND_CNT, MB_C_WEEKDAY_CNT, MB_C_WEEKEND_CNT,
+       MB_C_SPRING_CNT, MB_C_SUMMER_CNT, MB_C_FALL_CNT, MB_C_WINTER_CNT, MB_SG_DC_CNT,
+       MB_SP_DC_CNT, MB_AR_DC_CNT, MB_GH_DC_CNT, MS_SALE_CD,
+       INPUT_STAFF, INPUT_DATETIME, INPUT_IP, UPDATE_STAFF, UPDATE_DATETIME, UPDATE_IP)
+    SELECT #{coDiv},
+           MS_NUM,
+           MS_DIVISION,
+           'N',
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           0,
+           '',
+           'HOMEPAGE',
+           NOW(),
+           #{ip},
+           'HOMEPAGE',
+           NOW(),
+           #{ip}
+    FROM MS_MAININFO
+    WHERE MS_NUM = #{msNum}
+  </insert>
+
+  <select id="setSession" parameterType="hashmap" resultType="hashmap">
+    SELECT
+           H.MS_NUM
+         , H.MS_MAIN_CODIV
+         , H.MS_DIVISION
+         , H.MS_CLASS
+         , H.MS_LEVEL
+         , H.MS_ID
+         , H.MS_PASSWORD
+         , H.MS_NAME
+         , H.MS_SEX
+         , H.MS_BIRTH
+         , H.MS_BIRTHYL
+         , CAST(AES_DECRYPT(UNHEX(H.MS_EMAIL), 'JBOG') AS CHAR)      AS MS_EMAIL
+         , H.MS_EMAIL_YN
+         , H.MS_FIRST_PHONE1
+         , CAST(AES_DECRYPT(UNHEX(H.MS_MID_PHONE1), 'JBOG') AS CHAR) AS MS_MID_PHONE1
+         , H.MS_LAST_PHONE1
+         , H.SMS_CHK1
+         , CAST(AES_DECRYPT(UNHEX(H.MS_HOMETEL), 'JBOG') AS CHAR)    AS MS_HOMETEL
+         , H.MS_HOMEZIP
+         , H.MS_HOMEADDR1
+         , H.MS_HOMEADDR2
+         , CAST(AES_DECRYPT(UNHEX(H.MS_COMPTEL), 'JBOG') AS CHAR)    AS MS_COMPTEL
+         , H.MS_COMPZIP
+         , H.MS_COMPADDR1
+         , H.MS_COMPADDR2
+         , H.MS_DM_H
+         , H.MS_DM_C
+         , H.MS_CAR_NO
+         , H.MS_FIRSTDAY
+         , H.MS_WEEKDAY_CNT
+         , H.MS_WEEKEND_CNT
+         , H.INPUT_STAFF
+         , H.INPUT_DATETIME
+         , H.INPUT_IP
+         , H.UPDATE_STAFF
+         , H.UPDATE_DATETIME
+         , H.UPDATE_IP
+         , D.MS_JOB_CD
+         , D.MS_AREA
+         , IF(IFNULL(C.CD_LENGTH, 0) = 0, 21, C.CD_LENGTH)           AS MS_BK_CNT
+    FROM MS_MAININFO H
+           INNER JOIN MS_MAININFO_DETAIL D
+                      ON H.MS_NUM = D.MS_NUM
+           LEFT OUTER JOIN CD_COMMON C
+                           ON H.MS_MAIN_CODIV = C.CO_DIV
+                             AND H.MS_CLASS = C.CD_CODE
+                             AND C.CD_DIVISION = '006'
+    WHERE H.MS_NUM = #{MS_NUM}
+  </select>
+
+  <update id="doUpdateMemeber1" parameterType="hashmap">
+    UPDATE MS_MAININFO
+    SET
+      MS_SEX = #{sex}
+      <if test="!pw.equals('') and pw!=null">
+        , MS_PASSWORD = SHA2(#{pw}, 256)
+      </if>
+      , MS_BIRTH = #{birth}
+      , MS_BIRTHYL = #{birthYL}
+      , MS_FIRST_PHONE1 = #{phone1}
+      , MS_MID_PHONE1 = HEX(AES_ENCRYPT(#{phone2}, 'JBOG'))
+      , MS_LAST_PHONE1 = #{phone3}
+      , MS_MKT_AGREE_YN = #{mkt1}
+      , MS_MKT_AGREE_YN2 = #{mkt2}
+      , MS_MKT_AGREE_YN3 = #{mkt3}
+      , MS_EMAIL = HEX(AES_ENCRYPT(#{email}, 'JBOG'))
+      , MS_EMAIL_YN = #{chkMail}
+      , UPDATE_STAFF = 'HOMEPAGE'
+      , UPDATE_DATETIME = NOW()
+      , UPDATE_IP = #{ip}
+    WHERE MS_NUM = #{ms_num}
+  </update>
+
+  <update id="doUpdateMemeber2" parameterType="hashmap">
+    UPDATE MS_MAININFO_DETAIL
+    SET MS_AREA         = #{area}
+      , UPDATE_STAFF    = 'HOMEPAGE'
+      , UPDATE_DATETIME = NOW()
+      , UPDATE_IP       = #{ip}
+    WHERE MS_NUM = #{ms_num}
+  </update>
+
+  <select id="doDeleteMemeber1" parameterType="hashmap" resultType="int">
+    SELECT COUNT(*) AS CNT
+    FROM BK_HISTORY
+    WHERE CO_DIV = #{coDiv}
+      AND BK_DAY >= DATE_FORMAT(NOW(), '%Y%m%d')
+      AND BK_MSNUM = #{MS_NUM}
+  </select>
+
+  <select id="doDeleteMemeber2" parameterType="hashmap" resultType="int">
+    SELECT COUNT(*) AS CNT
+    FROM BL_BREACH
+    WHERE CO_DIV = #{coDiv}
+      AND BL_MSNUM = #{MS_NUM}
+      AND BL_BK_NOEND >= DATE_FORMAT(NOW(), '%Y%m%d')
+  </select>
+
+  <update id="doUpdateMemeber3" parameterType="hashmap">
+    UPDATE MS_MAININFO
+    SET MS_BLANK = 'Y'
+    WHERE MS_NUM = #{MS_NUM}
+  </update>
+
+  <select id="doFindId1" parameterType="hashmap" resultType="String">
+    SELECT MS_ID
+    FROM MS_MAININFO
+    WHERE MS_MAIN_CODIV = #{coDiv}
+      AND MS_NAME = #{name}
+      AND CONCAT(MS_FIRST_PHONE1
+            , CAST(AES_DECRYPT(UNHEX(MS_MID_PHONE1),'JBOG') AS CHAR)
+            , MS_LAST_PHONE1) = #{phone}
+      AND IFNULL(NULLIF(MS_BLANK,''),'N') = 'N'
+  </select>
+
+  <select id="doFindPw1" parameterType="hashmap" resultType="hashmap">
+    SELECT MS_NUM
+         , CONCAT(MS_FIRST_PHONE1
+      , CAST(AES_DECRYPT(UNHEX(MS_MID_PHONE1),'JBOG') AS CHAR)
+      , MS_LAST_PHONE1) AS MS_PHONE
+    FROM MS_MAININFO
+    WHERE MS_MAIN_CODIV = #{coDiv}
+      AND MS_NAME = #{name}
+      AND MS_ID = #{id}
+      AND IFNULL(NULLIF(MS_BLANK,''),'N') = 'N'
+  </select>
+
+  <update id="doFindPw2" parameterType="hashmap">
+    UPDATE MS_MAININFO
+    SET MS_PASSWORD = SHA2(#{newPw}, 256)
+    WHERE MS_NUM = #{msNum}
+  </update>
+
+</mapper>

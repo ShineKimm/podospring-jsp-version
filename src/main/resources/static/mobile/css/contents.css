@@ -1,0 +1,476 @@
+@charset "utf-8";
+
+/*-------------------------- common css --------------------------*/
+.dotLine{height:1px;border-bottom:1px dashed #dcdcdc;}
+.subLine{height:1px;border-bottom:1px solid #e6e6e6;width:96%;margin:0 auto;}
+.border{ border:1px solid #ddd;}
+
+/* btn */
+.greenBtn{background:#84af3b;color:#fff;border:1px solid #ffffff;}
+.whiteBtn{background:#ffffff;;color:#6e6e6e;border:1px solid #959595;}
+.grayBtn{background:#6e6e6e;color:#fff;border:1px solid #ffffff;}
+
+.btnBox{text-align:center;padding:30px 0;}
+.btnBox a{display:inline-block;width:23%;padding:12px 0;text-align:center;font-size:1em;border-radius:10px;}
+.btnBox a:last-child{margin-right:0;}
+
+.btnBox2{text-align:center;padding-top:20px;}
+.btnBox2 a{display:inline-block;width:23%;padding:10px 0;text-align:center;font-size:0.9em;margin-right:2%;box-shadow:3px 4px 0 #d0d0d0;}
+.btnBox2 a:last-child{margin-right:0;}
+
+.motion{background:#7d4698;color:#fff;}
+.cancel{background:#6e6e6e;color:#fff;}
+.delete{ background-color: #f8f8f8; color: #444; border:1px solid #ddd; border-radius: 7px; text-align: center; float: right; font-size: 12px; padding:3px 10px;}
+
+.wp25{ width: 25%;}
+.wp38{ width: 38%;}
+.wp50{ width: 50%;}
+
+/* font color, style */
+.orange{color:#ff970f;}
+.blue{color:#3e8ddc;}
+.boldBlue{color:#3e8ddc;font-weight:600;}
+.brown{color:#7d4698;}
+.gray{color:#b7b7b7;}
+.green{color:#306d36;}
+.red {color:#ce3718}
+.yellow{color:#e2af00;}
+.darkblue{color:steelblue;}
+
+.orangeBtn{background:#ff970f;text-align:center;color:#ffffff;margin:0 auto;}
+.blueBtn{background:#3e8ddc;text-align:center;color:#ffffff;margin:0 auto;}
+.grayBtn{background:#747474;text-align:center;color:#ffffff;margin:0 auto;}
+.greenBtn{background:#306d36;text-align:center;color:#ffffff;margin:0 auto;}
+.brownBtn{background:#7d4698;text-align:center;color:#ffffff;margin:0 auto;}
+
+.podo{ color: #7e4798;}
+.font125{ font-size: 1.25em;}
+.font875{ font-size: 0.875em;}
+.font825{ font-size: 0.825em;}
+.font785{ font-size: 0.785em;}
+
+.strong{ font-weight: 600; }
+.bold{ font-weight: 600; }
+
+.through{text-decoration:line-through;}
+.underline{text-decoration:underline;}
+
+.padding10{padding:10px 0;}
+.padding30{padding:30px 0;}
+.padding50{padding:30px 0;}
+.padding70{padding:70px 0;}
+
+/* select arrow */
+.select-arrow{background: url('/mobile/images/select-arrow.png') no-repeat right;}
+
+/*pageNum*/
+.pageNum{ width:100%; text-align: center; font-size: 0.875em;}
+.pageNum a.pagebtn{ border:1px solid #ddd; color: #444; width:20px; line-height: 20px; display:inline-block; margin: 10px; background-color: #fff;}
+.pageNum .pageNumWrap a{ display: inline-block; color: #444; width:20px; line-height: 20px;}
+.pageNum .pageNumWrap a.on{ font-weight: bold;}
+
+
+.menuTabBox{width:100%; margin:0 auto; background:#fff;  position: fixed; top: 70px; z-index: 10;}
+/*
+.menuTabBox .menuTab{width:100%; overflow:hidden;}
+.menuTabBox .menuTab li{float:left; width:25%; text-align:center; color:#8b8989; font-size:1.2em; font-weight:600;}
+.menuTabBox .menuTab li.on a{color:#444;padding-bottom: 3px; border-bottom: 2px solid blue;}
+*/
+
+.menuTabBox .menuList{width:100%; overflow: hidden; margin: auto; background-color: #7e4798; border-bottom:1px solid #ddd; font-size: 0; text-align: center;}
+.menuTabBox .menuList li{display:inline-block; width:25%; text-align:center; font-size:14px; font-weight:400; padding: 10px 0; border-bottom:1px dashed #9961b4;}
+.menuTabBox .menuList li:nth-child(5n){border-bottom:0;}
+.menuTabBox .menuList li a{ color: #fff;}
+.menuTabBox .menuList li.on a{color:#fff; font-weight: 800;}
+
+
+.contents{width:98%;margin:0px auto; overflow: hidden; border-radius: 10px; background-color: #fff; padding:160px 0 190px;}
+
+.commonTitle{margin-bottom:40px;}
+.commonTitle > li{text-align:center;margin-bottom:13px;}
+.commonTitle > li.title{font-size:1.4em;color:#474747;font-weight:500;}
+.commonTitle > li.midBar{width:40px;height:3px;background:#7e4798;margin:0 auto;}
+
+
+/*-------------------------- guide --------------------------*/
+/* etc */
+.etc-icon {max-width:100%; width:500px; margin:0 auto 0;}
+.ul li {float:right;width:170px;padding:12px 0;text-align:center;font-size:15px;font-weight:600;margin-right:20px;}
+
+
+
+/*-------------------------- reservation --------------------------*/
+/* reservation */
+.monthBox{ width: 100%;position: relative;}
+.monthBox .monthChoice{overflow:hidden;width:210px;margin: 0 auto 30px;}
+.monthBox .monthChoice > li{float:left;height:31px;line-height:31px;}
+.monthBox .monthChoice > li.date{font-size:1.5em;width:150px;text-align:center;color:#696969;}
+.monthBox .monthChoice .arwl{padding-right:5px;}
+.monthBox .monthChoice .arwr{padding-left:5px;}
+
+.monthBox .calendar{ width: 100%; margin: 0 auto; border:1px solid #c3c3c3;}
+.monthBox .calendar thead th{ height:60px; vertical-align: middle; font-size: 16px; color: #434343; }
+.monthBox .calendar thead th:first-child{ color: #d12525;}
+.monthBox .calendar thead th:last-child{ color: #276cc2;}
+.monthBox .calendar td{height:60px;font-size:0.85em; border:1px solid #c3c3c3;color: #3e3e3e;cursor:pointer;vertical-align:top;padding:10px;}
+.monthBox .calendar td > span{display:block;font-size:16px;margin-top:10px;text-align:center;color:#c3c3c3;}
+
+.monthBox .calendar tr td:first-child{ color: #d12525;}
+.monthBox .calendar tr td:last-child{ color: #276cc2;}
+
+.monthBox .calendar td.no{ background-color: #e7e7e7; color:#a5a5a5; cursor: default;}
+.monthBox .calendar tr td:first-child.no{ background-color: #e7e7e7; color:#a5a5a5;}
+.monthBox .calendar tr td:last-child.no{ background-color: #e7e7e7; color:#a5a5a5;}
+
+.monthBox .calendar td.choice{ background-color:#306d36; color: #fff !important; cursor: pointer;}
+.monthBox .calendar tr td.possible{background-color:#ffe7b7;}
+
+.calTxt{font-size:0.85em;line-height:1.5em;margin:7px 0 30px 3px;color:#696969; word-break: keep-all;}
+
+.mainReser{width:100%;margin:0.5em auto 1em;background:#5a5a5a;color:#fff;border-radius:10px;text-align:center;font-size:1.2em;padding:0.8em 0;}
+.mainReser span{color:#fff000;}
+
+.courseTab{width:100%;overflow:hidden;}
+.courseTab > li{float:left;width:24%;font-size:0.9em;padding:15px 0;text-align:center;}
+.courseTab > li.all{background:#7d4698;border-radius:15px 0 0 0;color:#fff;}
+.courseTab > li.shine{background:#505050;color:#fff; border-radius: 0;}
+.courseTab > li.podo{background:#626262;border-radius:0 15px 0 0;color:#fff;}
+.courseTab > li.jadoo{background:#747474;border-radius:0 15px 0 0;color:#fff;}
+
+.reserTable{width:100%;}
+.reserTable th {background-color:#f1f1f1; padding:10px 0;font-size:0.875em;color:#585858; vertical-align: middle;}
+.reserTable td {border-bottom:1px solid #dedede; padding:8px 0;font-size:0.9em;text-align:center;vertical-align:middle;}
+.reserTable td input.brownBtn{display:block;width:94%;margin:0 auto;;height:30px;font-size:0.9em;border-radius:15px;box-shadow:1px 3px 0 #dddddd;}
+
+
+/*-------------------------- member --------------------------*/
+/* login */
+.bigLogo{display:block;margin:0 auto 50px; width: 60%; max-width: 300px;}
+
+.loginBox{width:94%;margin:0 auto;}
+.loginBox > li{margin-bottom:10px;}
+.loginBox > li > Input{width:100%;height:60px;border-radius:10px;padding-left:10px;}
+.loginBox > li > Input.idInput{border:1px solid #ff970f;}
+.loginBox > li > Input.pwInput{border:1px solid #8f989d;}
+.loginBox > li > Input.check{width:18px;height:18px;margin:10px 0 0 5px;}
+
+.loginBtn{display:block;width:94%;padding:20px 0;font-size:1.2em;border-radius:15px;text-align:center;color:#fff;background:#7d4698;margin:40px auto 0;}
+.loginBtn2{display:block;width:94%;padding:20px 0;font-size:1.2em;border-radius:15px;text-align:center;color:#fff;background:#7d7d7d;margin:10px auto 0;}
+
+/* join01 */
+.agreeyBgBox{width:100%;margin:30px auto;padding:15px 5px;border-radius:15px;background:#f4f4f4;}
+.agreeyBgBox .joinAgreeyList{overflow:hidden;padding:5px; border-bottom:1px solid #e0e0e0;}
+.agreeyBgBox .joinAgreeyList li{float:left;}
+.agreeyBgBox .joinAgreeyList .agreeyTitle{ clear: both;font-size:0.875em;color:#4f4f4f;line-height:29px; letter-spacing: -2px;}
+
+.agreeyBgBox .joinAgreeyList .agreeyBtn1 , .agreeyBgBox .joinAgreeyList .agreeyBtn2 ,
+.agreeyBgBox .joinAgreeyList .agreeyBtn3, .agreeyBgBox .joinAgreeyList .agreeyBtn4, .agreeyBgBox .joinAgreeyList .agreeyBtn5{font-size:0.875em;padding:6px 8px;background:#f4f4f4;color:#797979;border-radius:10px;cursor:pointer;}
+
+.agreeyBgBox .joinAgreeyList .agreeyCheck{color:#a1a1a1;font-size:14px;padding-right:15px;float:right; letter-spacing: -1px; margin-top: 5px;}
+.agreeyBgBox .joinAgreeyList .agreeyCheck input{width:14px;height:14px;margin:0;vertical-align:bottom;}
+
+.agreeyBgBox .joinAgreeyList .arrowBtn{float:right;}
+
+/* .agreeyBgBox .joinTextarea_2 .joinTable { width: 100%; border-top:2px solid #979797; border-bottom:1px solid #3e3e3e; table-layout: fixed;} */
+
+.joinTextarea_1 .textarea, .joinTextarea_2 .textarea,
+.joinTextarea_3 .textarea, .joinTextarea_4 .textarea, .joinTextarea_5 .textarea{font-size:0.8em;
+width:100%;height:200px;border:1px solid #ddd;padding:10px;background:#f9f9f9; line-height: 18px; margin: 10px 0; overflow-y: scroll; word-break: keep-all; white-space: pre-line;}
+
+
+
+.agreeTitle{font-size:0.9em;padding:10px 0;}
+.agreeTitle span{font-size:0.725em;padding:10px 5px 10px 0;}
+.allAgree{margin:10px 0 30px;text-align: center;}
+
+/* join04 */
+.joinTable{ width: 100%; border-top:2px solid #979797; border-bottom:1px solid #3e3e3e; /*table-layout: fixed;*/}                                   
+.joinTable th{ background-color:#f6f6f6; border-bottom:1px solid #b4b4b4;border-right:1px solid #b4b4b4; width: 15%; text-align: center; padding: 10px 0; font-size: 0.875em; vertical-align: middle; word-break: keep-all;}
+.joinTable th:last-child{border-right:0;}
+.joinTable td{ border-bottom:1px solid #b4b4b4; border-right:1px solid #b4b4b4;width: 35%; padding:7px; font-size: 0.85em; line-height: 20px; vertical-align: middle; word-break: keep-all;}
+.joinTable td:last-child{border-right:0;}
+.joinTable td.title{ text-align: left; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+
+.joinTable td > input{background:#f4f4f4;height:28px;line-height:30px;border:1px solid #ccccca;padding-left:4px;color:#8c8c8c}
+.joinTable input.nameIp{width:90%;}
+.joinTable input.phIp{width:27%;}
+
+.confrimIp{width:35%;}
+.confirmBtn{display:inline-block;width:35%;height:30px;line-height:30px;text-align:center;margin:2px;font-size:0.9em;}
+
+/* join05 */
+.joinEndTxt{}
+.joinEndTxt > img{display:block;margin:50px auto 30px; width: 50%; max-width: 300px;}
+.joinEndTxt > p{font-size:0.9em;line-height:1.7em;text-align:center;}
+.joinEndTxt > p.big{font-size:1.2em;margin-bottom:10px;}
+
+/* withdraw */
+.withdraw{position:absolute;top:86px;right:0;width:70px;padding:7px 0;font-size:0.8em;text-align:center;color:#8e8e8e;border:1px solid #c4c4c4;}
+
+/* find */
+.findTab{width:70%;margin:50px auto;overflow:hidden;}
+.findTab > li{float:left;width:28%;padding:7px 0;text-align:center;font-size:0.9em;}
+.findTab > li.center{width:36%}
+.findTab > li.bar{width:1px;height:10px;padding:0;background:#b0b0b0;margin:9px 4px;}
+
+/*-------------------------- mypage --------------------------*/
+/* reserCheck */
+.commonDot{font-size:1em;padding-bottom:3px;padding-left:3px;color:#474747;}
+.commonDot::before{ content: '·'; font-size: 1.5em; font-weight: bold; color: #474747;vertical-align:middle;}
+
+.commonTable{ width: 100%; border-top:2px solid #979797; /*table-layout: fixed;*/}                                   
+.commonTable th{ background-color:#f6f6f6; border-bottom:1px solid #b4b4b4;border-right:1px solid #b4b4b4; text-align: center; padding: 10px 0; font-size: 0.9em; vertical-align: middle;}
+.commonTable th:last-child{border-right:0;}
+.commonTable td{ border-bottom:1px solid #b4b4b4; border-right:1px solid #b4b4b4;/*width: 35%;*/font-size: 0.85em; line-height: 20px;text-align:center;padding:7px 0;vertical-align:middle; word-break: keep-all;}
+.commonTable td:last-child{border-right:0;}
+.commonTable td.title{ text-align: left; text-overflow: ellipsis; overflow: hidden; /*white-space: nowrap;*/ padding:0 10px;}
+
+.commonTable td .inputBtn{display:block;width:94%;height:32px;font-size:0.9em;margin:-1px auto 0;border-radius:7px;}
+.commonTable td .inputBtn2{display:block;width:80%; padding: 5px; font-size:0.9em;margin:2px auto; border-radius:7px;}
+
+.grayBgTxt{padding:10px 10%;background:#ebebeb;font-size:0.85em;line-height:1.6em;margin-bottom:40px;}
+
+
+/* inGolf */
+.grayBg{padding:10px;background:#ebebeb;position:relative;margin-bottom:40px;}
+
+.inquiry{width:100%;padding:20px 0;}
+.inquiry .inquiryTitle{font-size:16px;color:#363636;width:100px;height:40px;margin-right:10px;line-height:40px;text-align:center;}
+.inquiry .dayInput{width:38%;height:30px;border:1px solid #dddddd;padding:5px;color:#b0abab;background:#fff;display:inline-block;vertical-align:middle;text-align:center;cursor:pointer;overflow:hidden;}
+.inquiry .dayInput .calImg{width:17px;display:block;float:right;}
+.inquiry .dayInput > a{display:inline-block;vertical-align: middle;margin-left:5px;}
+.inquiry > img{vertical-align:middle;margin-left:5px;}
+.inquiry .inquiryBtn{display:block;padding:10px 0;width:90%;color:#ffffff;background:#7d4698;font-size:15px;border-radius:10px;margin:10px auto 0;;text-align:center;}
+
+.SubMonthBox1{
+    position:absolute;
+    top:65px;
+    left:15px;
+    width:270px;
+    height: 280px;
+    border: solid 1px #e3e3e3;
+    background:#fff;
+    display: none; 
+    padding: 10px;
+    overflow:hidden;
+}
+.SubMonthBox1 .monthChoice{width:183px;overflow:hidden;margin:10px auto;}
+.SubMonthBox1 .monthChoice a{letter-spacing:0;display: inline-block;padding:0 10px;vertical-align: middle;} 
+.SubMonthBox1 .monthChoice .month {margin:0 auto;color:#1d1d1d;font-weight:bold;font-size:19px;text-align:center;padding:0 5px;vertical-align:middle;}
+
+.SubMonthBox1 .calTxt{width:100%;margin:10px auto;text-align:center;font-size:15px;letter-spacing:0;}
+
+.SubMonthBox1 .mainCalendar {text-align: center;width:100%;margin:0 auto;}
+
+.SubMonthBox1 .mainCalendar th {font-size:13px;color:#444444;font-weight: bold;padding:10px 0 ;}
+.SubMonthBox1 .mainCalendar td div {
+font-size:13px;font-family:"Nanum GothicB" ;width:30px;color:#b7b7b7;cursor: pointer;margin: auto;
+height:30px;line-height:30px;vertical-align: middle;}
+
+.SubMonthBox1 .mainCalendar .sun{color: #bf3b3b;height: 20px;}
+.SubMonthBox1 .mainCalendar .possible div{ color:#444; }
+.SubMonthBox1 .mainCalendar .today.possible div{background-color:#8ec055; background-size: 20px 20px; border-radius: 10px; color: #fff;}
+
+.SubMonthBox2{
+    position:absolute;
+    top: 65px;
+    left: 90px;
+    width:270px;
+    height: 280px;
+    border: solid 1px #e3e3e3;
+    background:#fff;
+    display: none; 
+    padding: 10px;
+    overflow:hidden;
+}
+.SubMonthBox2 .monthChoice{width:183px;overflow:hidden;margin:10px auto;}
+.SubMonthBox2 .monthChoice a{letter-spacing:0;display: inline-block;padding:0 10px;vertical-align: middle;} 
+.SubMonthBox2 .monthChoice .month {margin:0 auto;color:#1d1d1d;font-weight:bold;font-size:19px;text-align:center;padding:0 5px;vertical-align:middle;}
+
+.SubMonthBox2 .calTxt{width:100%;margin:10px auto;text-align:center;font-size:15px;letter-spacing:0;}
+
+.SubMonthBox2 .mainCalendar {text-align: center;width:100%;margin:0 auto;}
+
+.SubMonthBox2 .mainCalendar th {font-size:13px;color:#444444;font-weight: bold;padding:10px 0 ;}
+.SubMonthBox2 .mainCalendar td div {
+font-size:13px;font-family:"Nanum GothicB" ;width:30px;color:#b7b7b7;cursor: pointer;margin: auto;
+height:30px;line-height:30px;vertical-align: middle;}
+
+.SubMonthBox2 .mainCalendar .sun{color: #bf3b3b;height: 20px;}
+.SubMonthBox2 .mainCalendar .possible div{color:#444;}
+.SubMonthBox2 .mainCalendar .today.possible div{background-color:#8ec055; background-size: 20px 20px; border-radius: 10px; color: #fff;}
+
+
+/*-------------------------- board --------------------------*/
+.boardTxt{text-align:center;font-size:0.875em;margin-bottom:25px;line-height:1.5em; word-break: keep-all; padding:0 1em;}
+/* write */
+.boardTable{ width: 100%; border-top:2px solid #979797; border-bottom:1px solid #3e3e3e; table-layout: fixed;}                                   
+.boardTable th{ background-color:#f6f6f6; border-bottom:1px solid #b4b4b4;border-right:1px solid #b4b4b4;text-align: center; padding: 10px 0; font-size: 0.9em; vertical-align: middle;}
+.boardTable th:last-child{border-right:0;}
+.boardTable td{border-bottom:1px solid #b4b4b4; border-right:1px solid #b4b4b4;width: 35%;font-size: 0.85em; line-height: 20px;word-break:break-all;padding:7px 0 7px 5px;vertical-align:middle;}
+.boardTable td:last-child{border-right:0;}
+.boardTable td.title{ text-align: left; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; padding:0 10px;}
+.boardTable td.boardCont{ padding:5px; }
+.boardTable td.boardCont > img{display:block;width:100%;}
+
+.boardTable td .inputBtn{display:block;width:94%;height:32px;font-size:0.9em;margin:-1px auto 0;border-radius:7px; border: 0;}
+
+.boardTable td input[type="text"],.commonTable td input[type="password"],.commonTable td input[type="number"]{ height: 30px;}
+.boardTable td select{ height: 30px; font-size: 0.8em;}
+.boardTable td textarea{ height: 200px; overflow-y: scroll; resize: none; border:1px solid #ddd; width: 100%; padding:10px;}
+.boardTable td textarea.h100{ height: 100px;}
+.boardTable .fileName {display:inline-block;width:60%;height:30px;padding-left:10px;margin-right:5px;line-height:30px;border:1px solid #e1e1e1;background-color:#fff;vertical-align:middle;}
+.boardTable .fileName2 {display:inline-block;width:200px;height:30px;padding-left:10px;margin-right:20px;line-height:30px;border:1px solid #e1e1e1;background-color:#fff;vertical-align:middle;}
+.boardTable .btn_file {display:inline-block;background:#707070;width:150px;height:30px;line-height:30px;text-align:center;vertical-align:middle;color:#fff;font-size:12px;}
+.boardTable .btn_file.file2 {background:#d8d8d8;width:70px;color:#606060;border:1px solid #a0a0a0; font-size: 0.75em;}
+/*.boardTable input[type="file"] {position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+*/
+.boardTable td .txtInput{height:30px;background:#fff;width:70%;border: 1px solid #e1e1e1;}
+
+/* gallery */
+.galleryListBox{padding-top:15px;}
+.galleryListBox .galleryBox{width:320px;border:#e4e4e4 solid 1px;display:block;margin:0 auto 10px;}
+.galleryListBox .galleryBox .gallBoxCont{}
+.galleryListBox .galleryBox .gallBoxCont a{display:block;overflow:hidden;font-size:0;}
+.galleryListBox .galleryBox .gallBoxCont .galImg{width:100%;height:205px;}
+.galleryListBox .galleryBox .gallBoxCont .galImg img{width:100%;height: 100%;}
+.galleryListBox .galleryBox .gallBoxCont .gallery{height:130px;padding:15px;}
+.galleryListBox .galleryBox .gallBoxCont .gallery .gallTitle {width:240px;height:37px;font-size:15px;color:#111111;padding:10px 0;text-overflow:ellipsis;}
+.galleryListBox .galleryBox .gallBoxCont .gallery .gallDate{font-size:12px;color:#7f7f7f;}
+.galleryListBox .galleryBox .gallBoxCont .gallery .gallBtn{background:#7d4698;text-align:center;width:90px;height:27px;line-height:27px;border-radius:10px;color:#fff;font-size:12px;margin-top:15px;display:block;}
+
+
+.commonTable td.viewTitle { text-align: left; overflow: hidden; white-space: nowrap;text-overflow: ellipsis; padding: 5px 20px;}
+.commonTable tr.bg_reply td{ background-color: #f6f6f6;position: relative; background-clip: padding-box;}
+.commonTable tr.bg_reply .reply{ text-align: left; overflow: hidden; white-space: nowrap;text-overflow: ellipsis; padding-left: 60px; cursor: pointer;}
+.commonTable tr.bg_reply .reply::before{ content: ''; background: url('/mobile/images/reply.png') center center no-repeat; background-size:100%;width: 20px; height:17px;display: inline-block; position: absolute; top:7px; left: 30px;}
+.commonTable tr.bg_reply .reply b{ font-weight: 400;}
+.commonTable .new{ display: inline-block; border-radius: 10px; background-color: #f06019; color: #fff; text-align: center; padding: 0 5px; font-size:10px; vertical-align: middle; margin: 0 6px; text-transform: uppercase;}
+.commonTable .border0{ border-left:0;}
+.commonTable .joinCon{ text-align: left; padding: 40px; line-height: 28px;}
+.commonTable td textarea{ height: 200px; overflow-y: scroll; resize: none; border:1px solid #c9c9c9; width: 100%; padding:10px;}
+.commonTable td .replyInput{width:100%;height:32px;padding-left:10px;border:1px solid #c9c9c9;}
+.viewContentBox{width:100%;padding:15px;}
+.viewContentBox > img{max-width:100%;display:block;}
+
+/* joinWrite */
+.joinDate{ height: 30px; border:1px solid #c9c9c9; line-height: 30px; text-indent: 10px; position: relative; width: 180px; float: left; border-radius: 3px;}
+.joinDate .choiceCalendar{ float: right; padding:0 5px; display: inline-block; cursor: pointer;}
+.smallCalendarTit{ width: 100%;  margin-bottom:10px; overflow: hidden;}
+.smallCalendarTit p img{  height: 20px;vertical-align:middle;}
+.smallCalendarTit p.arwl{ width: 29%; text-align: right; float: left; display: inline-block;}
+.smallCalendarTit .date{ width: 40%;margin-top:4px; text-align:center;float: left; display: inline-block; font-size: 18px; line-height:23px; font-family: 'Nanum GothicB'; }
+.smallCalendarTit p.arwr{ width: 29%; text-align: left;float: left; display: inline-block;}
+
+.timeSelec{width:70%;height:30px;border: 1px solid #c9c9c9;border-radius:3px;text-align:left;}
+
+.boardTable td .replyInput{width:100%;height:32px;padding-left:10px;border:1px solid #c9c9c9;}
+
+.openCalendar{ display: none; position: absolute; width: 320px; padding: 10px; top:36px; left: -80px; background: #fff; border:1px solid #ddd; z-index: 10;}
+
+.openCalendar th{ text-align: center; padding:5px 0;  border:1px solid #c3c3c3;border-right:1px solid #c3c3c3 !important; }
+.openCalendar td{ padding:0; text-indent: 0; text-align: center; border:1px solid #c3c3c3;padding:5px 0;border-right:1px solid #c3c3c3 !important;}
+
+.openCalendar .commonTable{table-layout: fixed;}
+
+.comment {width: 100%;border: 1px solid #777;overflow: hidden;}
+.comment textarea {padding: 10px 15px;width: 93%;max-width: 1196px;height: 65px;border: none;box-sizing: border-box;border-bottom: 1px solid #ddd}
+
+.commentInner {position: relative;height: 100px;line-height: 0px;/* border-top: 1px solid #cdd3d7; */}
+.commentInner p{font-size: 14px;margin-top: 9px;}
+.commentInner a.miniBtn {position: absolute;top: -1px;right: 0;display: block;width: 100px;height: 101px;background-color:#aaa;font-size: 15px;line-height: 101px;text-align: center;color: #fff;}
+
+ul.listComment li {margin-top: 10px;position: relative;margin-bottom: 10px;padding: 20px 30px;background-color: #f9f9f9;}
+ul.listComment li p.data {margin-right: 20px;display: inline-block;font-size: 16px;color: #111;}
+ul.listComment li p.text {margin-top: 15px;font-size: 15px;line-height: 26px;color: #666;}
+
+ul.listComment li div.editBtn {position: absolute;top: 15px;right: 30px;}
+ul.listComment li div.editBtn a {display: inline-block;margin-left: 2px;padding:0 7px;border: 1px solid #ddd;border-radius: 2px;background-color: #fff;font-size: 14px;line-height: 28px;text-align: center;}
+
+/*-------------------------- club --------------------------*/
+/* intro */
+.clubTxt{font-size:0.875em;line-height:1.5em;overflow:hidden; }
+.clubTxt > span.blue{display:block; font-size:1.5em; margin-bottom:15px; line-height:1.5em; color:#18398e; font-weight:600; }
+
+.introImg{width:100%;margin-bottom:20px;}
+
+.introTxtBox{overflow:hidden;}
+
+/* location */
+#daumRoughmapContainer1616567894248{width:100%;}
+
+
+/*-------------------------- course --------------------------*/
+/* l1 d1 */
+.courseTab{margin:10px auto 30px;font-size:0.875em;width:100%;overflow:hidden;}
+.courseTab > li{float:left;width:24%;font-size:1.1em;padding:0.7em 0;border-radius:15px;margin-right:0.5%;text-align:center;background:#f7f7f7;color:#7c7c7c;}
+.courseTab > li.on{color:#fff;background:#7e4798;}
+.courseTab > li:last-child{margin-right:0;}
+
+.courseInfoBox{width:96%;margin:0 auto 20px;overflow:hidden;}
+.courseInfoBox .courseInfo{float:left;}
+.courseInfoBox .courseInfo > li{float:left;}
+.courseInfoBox .courseInfo > li.hole{font-size:4em;padding-right:5px;}
+.courseInfoBox .courseInfo > li.course{font-size:1.3em;padding-top:5px;}
+.courseInfoBox .courseInfo > li.course > span.big{font-size:1.4em;color:#000000;display:block;}
+.courseInfoBox .selectBox{float:right;}
+.courseInfoBox .selectBox .select{width:90px;padding-left:10px;}
+
+.courseTxt{width:96%;margin:0 auto;font-size:1em;line-height:1.3em;color:#838383;}
+.courseImg{width:100%;margin:20px 0;}
+
+.courseTable{width:100%; border-top: 1px solid #444;border-bottom: 1px solid #444;margin-bottom: 10px; font-size: 16px;}
+.courseTable th{ padding:10px 0;color:#fff;}
+.courseTable td{padding:10px 0;font-size:0.75em; border-bottom:1px solid #dedede;text-align:center; color:#3e3e3e; border-right: 1px solid #dedede; vertical-align: middle;}
+.courseTable td:first-child{border-left: 1px solid #dedede;}
+.courseTable tr:last-child td{border-bottom:0;}
+
+.courseTable td.blackBg{background:#333;color:#fff;}
+.courseTable td.blueBg{background:#378bcc;color:#fff;}
+.courseTable td.yellowBg{background:#f1bc22;color:#fff;}
+.courseTable td.redBg{background:#f1312c;color:#fff;}
+.courseTable td.gray2Bg{background:#f6f6f6;color:#333333;}
+.courseTable td.gray3Bg{background:#f6f6f6;color:#333333;}
+
+/*210506*/
+.commonTable2{ width: 100%; border-top:2px solid #979797; /*table-layout: fixed;*/}
+.commonTable2 th{ background-color:#f6f6f6; border-bottom:1px solid #b4b4b4;border-right:1px solid #b4b4b4; text-align: center; padding: 10px 0; font-size: 0.9em; vertical-align: middle;}
+.commonTable2 th:last-child{border-right:0;}
+.commonTable2 td{ border-bottom:1px solid #b4b4b4; border-right:1px solid #b4b4b4;/*width: 35%;*/font-size: 0.85em; line-height: 20px;text-align:center;padding:7px 0;vertical-align:middle; word-break: keep-all;}
+.commonTable2 td:last-child{border-right:0;}
+.commonTable2 td.title{ text-align: left; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; padding:0 10px;}
+
+.commonTable2 td .inputBtn{display:block;width:94%;height:32px;font-size:0.9em;margin:-1px auto 0;border-radius:7px;}
+.commonTable2 td .inputBtn2{display:block;width:80%; padding: 5px; font-size:0.9em;margin:2px auto; border-radius:7px;}
+
+/*220629*/
+.searchTerm{width: 100%; padding: 10px 0; display: flex; justify-content: center; border-radius: 3px 3px 0 0;  border: 1px solid #ddd;}
+.searchTerm input{height: 30px;}
+
+.openCalendar2{ display: none; position: absolute; width: 298px; padding: 10px; top:28px; left:-70px; background: #fff; border:1px solid #ddd; z-index: 10;}
+.openCalendar3{ display: none; position: absolute; width: 298px; padding: 10px; top:28px; left:-182px; background: #fff; border:1px solid #ddd; z-index: 10;}
+
+.sCalendar{ width: 100%; height: 100%; }
+.sCalendar th{font-size:1.25em; color: #444; font-weight: 600; padding:5px; text-indent: 0;}
+.sCalendar th:first-child{ color: #e07174;}
+.sCalendar th:last-child{ color: #199dd4;}
+.sCalendar td{ text-indent: 0; text-align: center; color: #45454f; font-size:1.25em; vertical-align: middle;}
+
+.stStyle{ font-size: 12px; font-weight: bold; padding: 7px;}
+.smallCalendarTit h3{ width: 40%; text-align:center;float: left; display: inline-block; font-size: 18px; line-height:29px; }
+.smallCalendarTit.sty1{ margin-bottom: 0;}
+.smallCalendarTit p.arwl a{ color: #333;}
+.smallCalendarTit p.arwr a{ color: #333;}
+
+.reser_search{ height: 30px; border:1px solid #c9c9c9; line-height: 30px; text-indent: 5px; position: relative; background-color: #fff; display: inline-block; vertical-align: middle; font-size: 0.7em;}
+.reser_search span{ float: right; padding:0 5px; display: inline-block; cursor: pointer;}
+.reser_search span img{ vertical-align: middle; width: 16px; margin-top: -4px;}
+
+.btn-search{ background-color:#444; color: #fff; text-align: center; padding: 6px 0; clear: both; width: 100%; display: block; margin:0 0 10px; }
+
+.score-text{ padding: 12px 0 6px;}
+.score-text.text-type01{ word-break: keep-all; white-space: pre-line; line-height: 1.5em;font-size: 0.825em;}
+.score-box{ padding: 30px 0;}
+.gray-bg-box{ width: 100%;padding:1em; margin-bottom:10px; background:#fafafa;border:1px solid #e6e6e6;}
+.gray-bg-box h2{ text-align: center; font-size: 1.125em; font-weight: bold; padding-bottom: 7px;}
+.gray-bg-box p{ text-align: center; font-size: 0.825em; letter-spacing: -1px; word-break: keep-all; line-height: 1.25em;}
